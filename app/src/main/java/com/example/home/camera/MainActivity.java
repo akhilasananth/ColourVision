@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.ImageFormat;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -16,13 +16,9 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.DngCreator;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -30,18 +26,14 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.TextureView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,12 +42,14 @@ public class MainActivity extends Activity {
     private static final String TAG = "AndroidCameraApi";
     private TextureView textureView;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
     private String cameraId;
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
@@ -66,10 +60,13 @@ public class MainActivity extends Activity {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
-    private OverlayView view;
+    private OverlayView overlayView;
 
-    private int frameWidth;
-    private int frameHeight;
+    private ColorView colorView;
+
+    private int searchRadius = 5;
+
+    private int color = Color.BLACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +80,31 @@ public class MainActivity extends Activity {
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
 
-        view = (OverlayView) findViewById(R.id.overlayView);
+        overlayView = (OverlayView) findViewById(R.id.overlayView);
+
+        colorView = (ColorView) findViewById(R.id.colorView);
+    }
+
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    colorView.setColor1(color);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    colorView.setColor2(color);
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
-        Paint paint;
 
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -108,9 +125,20 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
-            view.setColor(textureView.getBitmap().getPixel(textureView.getWidth()/2, textureView.getHeight()/2));
+            Bitmap bmp = textureView.getBitmap();
 
-            view.drawFrame();
+            int searchDiameter = searchRadius * 2;
+            int[] colors = new int[searchDiameter * searchDiameter];
+            int startX = textureView.getWidth()/2 - searchRadius;
+            int startY = textureView.getHeight()/2 - searchRadius;
+
+            bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
+
+            color = getAverageColor(colors);
+
+            overlayView.setColor(color);
+
+            overlayView.drawFrame();
         }
     };
 
@@ -262,5 +290,24 @@ public class MainActivity extends Activity {
         stopBackgroundThread();
         closeCamera();
         super.onDestroy();
+    }
+
+    public int getAverageColor(int[] colors) {
+
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for (int i : colors) {
+            r += Color.red(i);
+            g += Color.green(i);
+            b += Color.blue(i);
+        }
+
+        r /= colors.length;
+        g /= colors.length;
+        b /= colors.length;
+
+        return Color.rgb(r, g, b);
     }
 }
