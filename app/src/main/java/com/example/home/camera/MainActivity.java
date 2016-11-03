@@ -32,6 +32,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+
+    private Handler mOverlayHandler;
+    private HandlerThread mOverlayThread;
 
     private OverlayView overlayView;
 
@@ -125,6 +129,7 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+            /*
             Bitmap bmp = textureView.getBitmap();
 
             int searchDiameter = searchRadius * 2;
@@ -139,6 +144,27 @@ public class MainActivity extends Activity {
             overlayView.setColor(color);
 
             overlayView.drawFrame();
+            */
+
+            mOverlayHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Bitmap bmp = textureView.getBitmap();
+
+                    int searchDiameter = searchRadius * 2;
+                    int[] colors = new int[searchDiameter * searchDiameter];
+                    int startX = textureView.getWidth()/2 - searchRadius;
+                    int startY = textureView.getHeight()/2 - searchRadius;
+
+                    bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
+
+                    color = getAverageColor(colors);
+
+                    overlayView.setColor(color);
+
+                    overlayView.drawFrame();
+                }
+            });
         }
     };
 
@@ -165,6 +191,11 @@ public class MainActivity extends Activity {
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+
+        mOverlayThread = new HandlerThread("Overlay Thread");
+        mOverlayThread.start();
+        mOverlayHandler = new Handler(mOverlayThread.getLooper());
+
     }
 
     protected void stopBackgroundThread() {
@@ -174,8 +205,15 @@ public class MainActivity extends Activity {
                 mBackgroundThread.quitSafely();
                 mBackgroundThread.join();
             }
+            if (mOverlayThread != null) {
+                mOverlayThread.quitSafely();
+                mOverlayThread.join();
+            }
             mBackgroundThread = null;
             mBackgroundHandler = null;
+
+            mOverlayThread = null;
+            mOverlayHandler = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -239,6 +277,7 @@ public class MainActivity extends Activity {
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -281,7 +320,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
-        //closeCamera();
+        closeCamera();
         stopBackgroundThread();
         super.onPause();
     }
@@ -309,5 +348,10 @@ public class MainActivity extends Activity {
         b /= colors.length;
 
         return Color.rgb(r, g, b);
+    }
+
+    public String getColorName() {
+        //TODO
+        return "";
     }
 }

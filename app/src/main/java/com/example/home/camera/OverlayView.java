@@ -63,15 +63,9 @@ public class OverlayView extends SurfaceView {
 
             paint.setStyle(Paint.Style.FILL);
 
-            paint.setColor(mColor);
-            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 60, paint);
+            drawColorInfo(canvas);
 
-            paint.setColor(Color.WHITE);
-            canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 10, paint);
-
-            paint.setTextSize(60);
-            paint.setColor(Color.WHITE);
-            canvas.drawText("FPS: " + FPS, 200, 200, paint);
+            drawCenter(canvas);
 
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
@@ -84,6 +78,32 @@ public class OverlayView extends SurfaceView {
             frames = 0;
         }
         frames++;
+    }
+
+    public void drawColorInfo(Canvas canvas) {
+        paint.setColor(getResources().getColor(R.color.Whitesmoke));
+        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight()/10, paint);
+
+        int height = canvas.getHeight()/10 - 10;
+
+        paint.setColor(mColor);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(10, 10, height, height, paint);
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.BLACK);
+
+        canvas.drawRect(10, 10, height, height, paint);
+
+        paint.setTextSize(90);
+        paint.setColor(Color.GREEN);
+        canvas.drawText("color name", 200, height/2, paint);
+    }
+
+    public void drawCenter(Canvas canvas) {
+        paint.setColor(Color.WHITE);
+        canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 10, paint);
     }
 
     public void setColor(int color) {

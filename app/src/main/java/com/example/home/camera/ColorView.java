@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -60,5 +61,17 @@ public class ColorView extends SurfaceView {
 
             getHolder().unlockCanvasAndPost(canvas);
         }
+    }
+
+    public int getClosestColor(int color) {
+        //TODO
+        String[] strings = getResources().getStringArray(R.array.items);
+        Log.i("first color", strings[0]);
+        return 0;
+    }
+
+    public boolean colorsMatch(int color1, int color2) {
+        //TODO
+        return false;
     }
 }
