@@ -18,6 +18,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -60,9 +61,6 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
-
-    private Handler mOverlayHandler;
-    private HandlerThread mOverlayThread;
 
     private OverlayView overlayView;
 
@@ -129,42 +127,11 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+            new LongOperation().execute("");
+
             /*
-            Bitmap bmp = textureView.getBitmap();
 
-            int searchDiameter = searchRadius * 2;
-            int[] colors = new int[searchDiameter * searchDiameter];
-            int startX = textureView.getWidth()/2 - searchRadius;
-            int startY = textureView.getHeight()/2 - searchRadius;
-
-            bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
-
-            color = getAverageColor(colors);
-
-            overlayView.setColor(color);
-
-            overlayView.drawFrame();
             */
-
-            mOverlayHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Bitmap bmp = textureView.getBitmap();
-
-                    int searchDiameter = searchRadius * 2;
-                    int[] colors = new int[searchDiameter * searchDiameter];
-                    int startX = textureView.getWidth()/2 - searchRadius;
-                    int startY = textureView.getHeight()/2 - searchRadius;
-
-                    bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
-
-                    color = getAverageColor(colors);
-
-                    overlayView.setColor(color);
-
-                    overlayView.drawFrame();
-                }
-            });
         }
     };
 
@@ -191,11 +158,6 @@ public class MainActivity extends Activity {
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-
-        mOverlayThread = new HandlerThread("Overlay Thread");
-        mOverlayThread.start();
-        mOverlayHandler = new Handler(mOverlayThread.getLooper());
-
     }
 
     protected void stopBackgroundThread() {
@@ -205,15 +167,9 @@ public class MainActivity extends Activity {
                 mBackgroundThread.quitSafely();
                 mBackgroundThread.join();
             }
-            if (mOverlayThread != null) {
-                mOverlayThread.quitSafely();
-                mOverlayThread.join();
-            }
             mBackgroundThread = null;
             mBackgroundHandler = null;
 
-            mOverlayThread = null;
-            mOverlayHandler = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -331,6 +287,23 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
+    public void heavyWork(TextureView tView){
+        Bitmap bmp = tView.getBitmap();
+
+        int searchDiameter = searchRadius * 2;
+        int[] colors = new int[searchDiameter * searchDiameter];
+        int startX = tView.getWidth()/2 - searchRadius;
+        int startY = tView.getHeight()/2 - searchRadius;
+
+        bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
+
+        color = getAverageColor(colors);
+
+        overlayView.setColor(color);
+
+        overlayView.drawFrame();
+    }
+
     public int getAverageColor(int[] colors) {
 
         int r = 0;
@@ -353,5 +326,32 @@ public class MainActivity extends Activity {
     public String getColorName() {
         //TODO
         return "";
+    }
+
+    public class LongOperation extends AsyncTask<String, Void, String> {
+
+        TextureView tView;
+
+        @Override
+        protected String doInBackground(String... params) {
+            if (tView != null)
+                heavyWork(tView);
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            tView = textureView;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+
+        }
     }
 }

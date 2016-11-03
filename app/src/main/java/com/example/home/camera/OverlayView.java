@@ -67,6 +67,8 @@ public class OverlayView extends SurfaceView {
 
             drawCenter(canvas);
 
+            drawFPS(canvas);
+
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
 
@@ -104,6 +106,10 @@ public class OverlayView extends SurfaceView {
     public void drawCenter(Canvas canvas) {
         paint.setColor(Color.WHITE);
         canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 10, paint);
+    }
+
+    public void drawFPS(Canvas canvas) {
+        canvas.drawText("FPS: " + FPS, 200, 200, paint);
     }
 
     public void setColor(int color) {
