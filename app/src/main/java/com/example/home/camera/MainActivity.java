@@ -289,19 +289,20 @@ public class MainActivity extends Activity {
 
     public void heavyWork(TextureView tView){
         Bitmap bmp = tView.getBitmap();
+        if(bmp != null){
+            int searchDiameter = searchRadius * 2;
+            int[] colors = new int[searchDiameter * searchDiameter];
+            int startX = tView.getWidth()/2 - searchRadius;
+            int startY = tView.getHeight()/2 - searchRadius;
 
-        int searchDiameter = searchRadius * 2;
-        int[] colors = new int[searchDiameter * searchDiameter];
-        int startX = tView.getWidth()/2 - searchRadius;
-        int startY = tView.getHeight()/2 - searchRadius;
+            bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
 
-        bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
+            color = getAverageColor(colors);
 
-        color = getAverageColor(colors);
+            overlayView.setColor(color);
 
-        overlayView.setColor(color);
-
-        overlayView.drawFrame();
+            overlayView.drawFrame();
+        }
     }
 
     public int getAverageColor(int[] colors) {
