@@ -6,11 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
-import android.os.HandlerThread;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import static com.example.home.camera.ColorHelper.RGBtoXYZ;
+import static com.example.home.camera.ColorHelper.XYZtoCIELab;
+import static com.example.home.camera.ColorHelper.getDeltaE;
+import static com.example.home.camera.ColorHelper.getColorName;
 
 /**
  * Created by home on 30/10/2016.
@@ -88,6 +91,8 @@ public class OverlayView extends SurfaceView {
 
         int height = canvas.getHeight()/10 - 10;
 
+        int closestColor = getClosestColor(mColor);
+
         paint.setColor(mColor);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(10, 10, height, height, paint);
@@ -99,8 +104,9 @@ public class OverlayView extends SurfaceView {
         canvas.drawRect(10, 10, height, height, paint);
 
         paint.setTextSize(90);
+        paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.GREEN);
-        canvas.drawText("color name", 200, height/2, paint);
+        canvas.drawText(getColorName(closestColor), 200, height/2, paint);
     }
 
     public void drawCenter(Canvas canvas) {
@@ -116,4 +122,20 @@ public class OverlayView extends SurfaceView {
         mColor = color;
     }
 
+    public int getClosestColor(int color) {
+        int closestColor = 0;
+        double currentDistance = Double.MAX_VALUE;
+
+        for(String x : getResources().getStringArray(R.array.values)){;
+            int currentColor = Color.parseColor(x);
+
+            double tempDistance = getDeltaE(XYZtoCIELab(RGBtoXYZ(currentColor)), XYZtoCIELab(RGBtoXYZ(color)));
+
+            if(tempDistance < currentDistance){
+                currentDistance = tempDistance;
+                closestColor = currentColor;
+            }
+        }
+        return closestColor;
+    }
 }

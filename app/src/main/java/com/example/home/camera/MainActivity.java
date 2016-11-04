@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -66,9 +67,9 @@ public class MainActivity extends Activity {
 
     private ColorView colorView;
 
-    private int searchRadius = 5;
-
     private int color = Color.BLACK;
+
+    private ColorHelper colorHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,9 @@ public class MainActivity extends Activity {
         overlayView = (OverlayView) findViewById(R.id.overlayView);
 
         colorView = (ColorView) findViewById(R.id.colorView);
+
+        colorHelper = new ColorHelper(this);
+
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -290,6 +294,7 @@ public class MainActivity extends Activity {
     public void heavyWork(TextureView tView){
         Bitmap bmp = tView.getBitmap();
         if(bmp != null){
+            int searchRadius = 5;
             int searchDiameter = searchRadius * 2;
             int[] colors = new int[searchDiameter * searchDiameter];
             int startX = tView.getWidth()/2 - searchRadius;
