@@ -59,6 +59,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.example.home.camera.ColorHelper.getAverageColor;
+import static com.example.home.camera.ColorHelper.isMatch;
 
 public class MainActivity extends Activity {
     private static final String TAG = "AndroidCameraApi";
@@ -140,6 +141,8 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
+        Log.i(TAG, "" + isMatch(Color.BLUE, Color.YELLOW));
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {

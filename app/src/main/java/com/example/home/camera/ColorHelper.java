@@ -97,10 +97,20 @@ public class ColorHelper {
         double[] c1xyz = XYZtoCIELab(RGBtoXYZ(color1));
         double[] c2xyz = XYZtoCIELab(RGBtoXYZ(color2));
 
+        double[] white = {100.0, 0.0, 0.0};
 
+        double minDiff = 2.3;
 
+        double d1 = getDeltaE(c1xyz, white);
+        double d2 = getDeltaE(c2xyz, white);
 
+        double average = (d1+d2)/2;
 
+        if (average-d1 <= minDiff && average-d1 > 0) {
+            return true;
+        }
+
+        return false;
 
     }
 
