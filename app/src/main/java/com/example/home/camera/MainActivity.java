@@ -27,6 +27,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,6 +40,7 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -60,6 +62,24 @@ import java.util.List;
 
 import static com.example.home.camera.ColorHelper.getAverageColor;
 import static com.example.home.camera.ColorHelper.isMatch;
+import android.os.Bundle;
+import android.app.Activity;
+import android.support.v4.view.GestureDetectorCompat;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 
 public class MainActivity extends Activity {
     private static final String TAG = "AndroidCameraApi";
@@ -98,6 +118,11 @@ public class MainActivity extends Activity {
     private Thread onFrameThread;
 
     private boolean running = false;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,12 +149,13 @@ public class MainActivity extends Activity {
             public void run() {
                 long prevTime = System.currentTimeMillis();
                 running = true;
-                while(running) {
+                while (running) {
 
                     long currTime = System.currentTimeMillis();
                     if (currTime >= prevTime + 1000) {
                         mBackgroundHandler.post(new Runnable() {
                             TextureView tView = textureView;
+
                             @Override
                             public void run() {
                                 if (tView != null)
@@ -143,6 +169,9 @@ public class MainActivity extends Activity {
         });
 
         Log.i(TAG, "" + isMatch(Color.BLUE, Color.YELLOW));
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -207,20 +236,20 @@ public class MainActivity extends Activity {
         boolean darkFlag = false;
         boolean msgSent = true;
         int threshold = 200;
+
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
                 Log.i("light level: ", "" + event.values[0]);
-                if(event.values[0]>threshold){
+                if (event.values[0] > threshold) {
                     darkFlag = true;
-                }
-                else{
+                } else {
                     darkFlag = false;
                     msgSent = false;
                 }
 
-                if(!msgSent && darkFlag){
-                    Toast.makeText(MainActivity.this,"light level: " + event.values[0], Toast.LENGTH_SHORT );
+                if (!msgSent && darkFlag) {
+                    Toast.makeText(MainActivity.this, "light level: " + event.values[0], Toast.LENGTH_SHORT);
                     msgSent = true;
                 }
 
@@ -246,8 +275,8 @@ public class MainActivity extends Activity {
 
                 int[] colors = new int[searchDiameter * searchDiameter];
 
-                int x = width/2 - searchRadius;
-                int y = height/2 - searchRadius;
+                int x = width / 2 - searchRadius;
+                int y = height / 2 - searchRadius;
 
                 Rect cropRect = new Rect(x - searchRadius, y + searchRadius, x + searchRadius, y + searchRadius);
                 image.setCropRect(cropRect);
@@ -258,7 +287,7 @@ public class MainActivity extends Activity {
                 buffer.get(bytes);
 
                 BitmapFactory.decodeByteArray(bytes, 0, 0)
-                    .getPixels(colors, 0, searchDiameter, x, y, searchDiameter, searchDiameter);
+                        .getPixels(colors, 0, searchDiameter, x, y, searchDiameter, searchDiameter);
 
                 color = getAverageColor(colors);
 
@@ -284,10 +313,12 @@ public class MainActivity extends Activity {
             cameraDevice = camera;
             createCameraPreview();
         }
+
         @Override
         public void onDisconnected(CameraDevice camera) {
             cameraDevice.close();
         }
+
         @Override
         public void onError(CameraDevice camera, int error) {
             cameraDevice.close();
@@ -333,7 +364,7 @@ public class MainActivity extends Activity {
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
 
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){
+            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     //The camera is already closed
@@ -344,6 +375,7 @@ public class MainActivity extends Activity {
                     cameraCaptureSessions = cameraCaptureSession;
                     updatePreview();
                 }
+
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Toast.makeText(MainActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
@@ -377,7 +409,7 @@ public class MainActivity extends Activity {
     }
 
     protected void updatePreview() {
-        if(null == cameraDevice) {
+        if (null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
@@ -439,14 +471,14 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
-    public void heavyWork(TextureView tView){
+    public void heavyWork(TextureView tView) {
         Bitmap bmp = tView.getBitmap();
-        if(bmp != null){
+        if (bmp != null) {
             int searchRadius = 5;
             int searchDiameter = searchRadius * 2;
             int[] colors = new int[searchDiameter * searchDiameter];
-            int startX = tView.getWidth()/2 - searchRadius;
-            int startY = tView.getHeight()/2 - searchRadius;
+            int startX = tView.getWidth() / 2 - searchRadius;
+            int startY = tView.getHeight() / 2 - searchRadius;
 
             bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
 
@@ -456,6 +488,42 @@ public class MainActivity extends Activity {
 
             overlayView.drawFrame();
         }
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
     public class LongOperation extends AsyncTask<String, Void, String> {
@@ -483,5 +551,60 @@ public class MainActivity extends Activity {
         protected void onProgressUpdate(Void... values) {
 
         }
+    }
+
+    public class FlingGestureListener implements GestureDetector.OnGestureListener {
+        private GestureDetectorCompat mDetector;
+        Animation slide_out_left, slide_out_right;
+        Animation slide_in_right, slide_in_left;
+        ViewFlipper viewFlipper;
+
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+            float sensitvity = 50;
+
+            if((e1.getX() - e2.getX()) > sensitvity){
+                viewFlipper.setInAnimation(slide_in_right);
+                viewFlipper.setOutAnimation(slide_out_left);
+                viewFlipper.showPrevious();
+                Toast.makeText(MainActivity.this,
+                        "Previous", Toast.LENGTH_SHORT).show();
+            }else if((e2.getX() - e1.getX()) > sensitvity){
+                viewFlipper.setInAnimation(slide_in_left);
+                viewFlipper.setOutAnimation(slide_out_right);
+                viewFlipper.showNext();
+                Toast.makeText(MainActivity.this,
+                        "Next", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+        }
+
     }
 }

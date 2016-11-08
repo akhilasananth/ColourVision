@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import static com.example.home.camera.ColorHelper.getClosestColor;
 import static com.example.home.camera.ColorHelper.getColorName;
+import static com.example.home.camera.ColorHelper.isMatch;
+
 
 /**
  * Created by home on 31/10/2016.
@@ -68,6 +70,13 @@ public class ColorView extends SurfaceView {
     public void setColor2(int color) {
         color2 = color;
         speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        if(isMatch(color1,color2)){
+            speech.speak("It is a match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        }
+        else{
+            speech.speak("Not a match. Please try again.",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+
+        }
         update();
     }
 
