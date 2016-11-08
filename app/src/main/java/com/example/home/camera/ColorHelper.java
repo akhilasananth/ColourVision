@@ -69,6 +69,7 @@ public class ColorHelper {
                 Math.pow(color2[2] - color1[2], 2));
     }
 
+    //Returns the name of the colour detected
     public static int getClosestColor(int color) {
         int closestColor = 0;
         double currentDistance = Double.MAX_VALUE;
@@ -89,6 +90,37 @@ public class ColorHelper {
             }
         }
         return closestColor;
+    }
+
+    //Returns true if two colours are a match
+    public static boolean isMatch(int color1, int color2){
+        double[] c1xyz = XYZtoCIELab(RGBtoXYZ(color1));
+        double[] c2xyz = XYZtoCIELab(RGBtoXYZ(color2));
+
+
+
+
+
+
+    }
+
+    public static int getAverageColor(int[] colors) {
+
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for (int i : colors) {
+            r += Color.red(i);
+            g += Color.green(i);
+            b += Color.blue(i);
+        }
+
+        r /= colors.length;
+        g /= colors.length;
+        b /= colors.length;
+
+        return Color.rgb(r, g, b);
     }
 
     public static String getColorName(int color) {

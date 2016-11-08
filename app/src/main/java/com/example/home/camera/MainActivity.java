@@ -4,11 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -16,13 +23,17 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
 import android.media.ImageReader;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
@@ -37,9 +48,17 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.example.home.camera.ColorHelper.getAverageColor;
 
 public class MainActivity extends Activity {
     private static final String TAG = "AndroidCameraApi";
@@ -71,6 +90,14 @@ public class MainActivity extends Activity {
 
     private ColorHelper colorHelper;
 
+    private SensorManager mSensorManager;
+
+    private Sensor mLightSensor;
+
+    private Thread onFrameThread;
+
+    private boolean running = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +116,30 @@ public class MainActivity extends Activity {
 
         colorHelper = new ColorHelper(this);
 
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        onFrameThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long prevTime = System.currentTimeMillis();
+                running = true;
+                while(running) {
+
+                    long currTime = System.currentTimeMillis();
+                    if (currTime >= prevTime + 1000) {
+                        mBackgroundHandler.post(new Runnable() {
+                            TextureView tView = textureView;
+                            @Override
+                            public void run() {
+                                if (tView != null)
+                                    heavyWork(tView);
+                            }
+                        });
+                        prevTime = currTime;
+                    }
+                }
+            }
+        });
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -128,14 +179,97 @@ public class MainActivity extends Activity {
             return false;
         }
 
+        int frames = 0;
+        int FPS = 0;
+        long prevTime = System.currentTimeMillis();
+
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            //new LongOperation().execute("");
+            Log.i(TAG, "FPS: " + FPS);
 
-            new LongOperation().execute("");
+            long currentTime = System.currentTimeMillis();
 
-            /*
+            if (currentTime >= prevTime + 1000) {
+                prevTime = currentTime;
+                FPS = frames;
+                frames = 0;
+            }
+            frames++;
+        }
+    };
 
-            */
+    private SensorEventListener sensorEventListener = new SensorEventListener() {
+
+        boolean darkFlag = false;
+        boolean msgSent = true;
+        int threshold = 200;
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                Log.i("light level: ", "" + event.values[0]);
+                if(event.values[0]>threshold){
+                    darkFlag = true;
+                }
+                else{
+                    darkFlag = false;
+                    msgSent = false;
+                }
+
+                if(!msgSent && darkFlag){
+                    Toast.makeText(MainActivity.this,"light level: " + event.values[0], Toast.LENGTH_SHORT );
+                    msgSent = true;
+                }
+
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
+    private ImageReader.OnImageAvailableListener onImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+        @Override
+        public void onImageAvailable(ImageReader reader) {
+            Image image = null;
+            try {
+                int height = image.getHeight();
+                int width = image.getWidth();
+
+                int searchRadius = 5;
+                int searchDiameter = searchRadius * 2;
+
+                int[] colors = new int[searchDiameter * searchDiameter];
+
+                int x = width/2 - searchRadius;
+                int y = height/2 - searchRadius;
+
+                Rect cropRect = new Rect(x - searchRadius, y + searchRadius, x + searchRadius, y + searchRadius);
+                image.setCropRect(cropRect);
+
+                image = reader.acquireLatestImage();
+                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                byte[] bytes = new byte[buffer.capacity()];
+                buffer.get(bytes);
+
+                BitmapFactory.decodeByteArray(bytes, 0, 0)
+                    .getPixels(colors, 0, searchDiameter, x, y, searchDiameter, searchDiameter);
+
+                color = getAverageColor(colors);
+
+                overlayView.setColor(color);
+
+                overlayView.drawFrame();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (image != null) {
+                    image.close();
+                }
+            }
         }
     };
 
@@ -162,6 +296,7 @@ public class MainActivity extends Activity {
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+        onFrameThread.start();
     }
 
     protected void stopBackgroundThread() {
@@ -174,6 +309,8 @@ public class MainActivity extends Activity {
             mBackgroundThread = null;
             mBackgroundHandler = null;
 
+            running = false;
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -183,10 +320,16 @@ public class MainActivity extends Activity {
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
             assert texture != null;
-            texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
+
+            int width = imageDimension.getWidth();
+            int height = imageDimension.getHeight();
+
+            texture.setDefaultBufferSize(width, height);
+
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
+
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
@@ -237,7 +380,6 @@ public class MainActivity extends Activity {
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
-
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -270,6 +412,8 @@ public class MainActivity extends Activity {
         super.onResume();
         Log.e(TAG, "onResume");
         startBackgroundThread();
+        mSensorManager.registerListener(sensorEventListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
         if (textureView.isAvailable()) {
             openCamera();
         } else {
@@ -281,6 +425,7 @@ public class MainActivity extends Activity {
     protected void onPause() {
         Log.e(TAG, "onPause");
         closeCamera();
+        mSensorManager.unregisterListener(sensorEventListener);
         stopBackgroundThread();
         super.onPause();
     }
@@ -308,30 +453,6 @@ public class MainActivity extends Activity {
 
             overlayView.drawFrame();
         }
-    }
-
-    public int getAverageColor(int[] colors) {
-
-        int r = 0;
-        int g = 0;
-        int b = 0;
-
-        for (int i : colors) {
-            r += Color.red(i);
-            g += Color.green(i);
-            b += Color.blue(i);
-        }
-
-        r /= colors.length;
-        g /= colors.length;
-        b /= colors.length;
-
-        return Color.rgb(r, g, b);
-    }
-
-    public String getColorName() {
-        //TODO
-        return "";
     }
 
     public class LongOperation extends AsyncTask<String, Void, String> {

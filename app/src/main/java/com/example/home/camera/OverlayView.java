@@ -50,12 +50,6 @@ public class OverlayView extends SurfaceView {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
-    int frames = 0;
-
-    int FPS = 0;
-
-    long prevTime = System.currentTimeMillis();
-
     protected void drawFrame() {
 
         Canvas canvas = surfaceHolder.lockCanvas();
@@ -70,19 +64,8 @@ public class OverlayView extends SurfaceView {
 
             drawCenter(canvas);
 
-            drawFPS(canvas);
-
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
-
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime >= prevTime + 1000) {
-            prevTime = currentTime;
-            FPS = frames;
-            frames = 0;
-        }
-        frames++;
     }
 
     public void drawColorInfo(Canvas canvas) {
@@ -112,10 +95,6 @@ public class OverlayView extends SurfaceView {
     public void drawCenter(Canvas canvas) {
         paint.setColor(Color.WHITE);
         canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 10, paint);
-    }
-
-    public void drawFPS(Canvas canvas) {
-        canvas.drawText("FPS: " + FPS, 200, 200, paint);
     }
 
     public void setColor(int color) {
