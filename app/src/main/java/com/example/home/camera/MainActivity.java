@@ -1,111 +1,54 @@
 package com.example.home.camera;
-import android.Manifest;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
-import android.support.v4.app.ActivityCompat;
+import android.transition.Fade;
+import android.transition.Scene;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
 import android.util.Log;
-import android.util.Size;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.example.home.camera.ColorHelper.getAverageColor;
-import static com.example.home.camera.ColorHelper.isMatch;
-import android.os.Bundle;
-import android.app.Activity;
-import android.support.v4.view.GestureDetectorCompat;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
-
+import static com.example.home.camera.ColorHelper.getAverageColor;
 
 public class MainActivity extends Activity {
     private static final String TAG = "AndroidCameraApi";
-    private TextureView textureView;
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
-
-    private String cameraId;
-    protected CameraDevice cameraDevice;
-    protected CameraCaptureSession cameraCaptureSessions;
-    protected CaptureRequest.Builder captureRequestBuilder;
-    private Size imageDimension;
-    private ImageReader imageReader;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
 
     private OverlayView overlayView;
-
+    private CameraPreview cameraPreview;
     private ColorView colorView;
+
+    private HandlerThread handlerThread;
+    private Handler handler;
 
     private int color = Color.BLACK;
 
@@ -115,14 +58,12 @@ public class MainActivity extends Activity {
 
     private Sensor mLightSensor;
 
-    private Thread onFrameThread;
-
     private boolean running = false;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+
+    private boolean quit = false;
+    private ColorMatchView colorMatchView;
+
+    ViewFlipper viewFlipper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,49 +71,76 @@ public class MainActivity extends Activity {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.activity_main);
-        textureView = (TextureView) findViewById(R.id.texture);
-        assert textureView != null;
-        textureView.setSurfaceTextureListener(textureListener);
 
         overlayView = (OverlayView) findViewById(R.id.overlayView);
-
         colorView = (ColorView) findViewById(R.id.colorView);
+
+        cameraPreview = (CameraPreview) findViewById(R.id.cameraPreview);
+        cameraPreview.setSurfaceTextureListener(textureListener);
+
 
         colorHelper = new ColorHelper(this);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        onFrameThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                long prevTime = System.currentTimeMillis();
-                running = true;
-                while (running) {
 
+        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
+        onFrameThread.start();
+
+        overlayView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeTop() {
+                Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeRight() {
+                //Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
+                //Intent i = new Intent(getApplicationContext(), ColorMatchActivity.class);
+                //startActivity(i);
+                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_from_left));
+                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_to_right));
+                viewFlipper.showPrevious();
+            }
+            public void onSwipeLeft() {
+                //Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
+                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_from_right));
+                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_to_left));
+                viewFlipper.showNext();
+
+            }
+            public void onSwipeBottom() {
+                Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private Thread onFrameThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            long prevTime = System.currentTimeMillis();
+            running = true;
+            while (!quit) {
+                if (!running) {
+
+                } else {
                     long currTime = System.currentTimeMillis();
                     if (currTime >= prevTime + 1000) {
-                        mBackgroundHandler.post(new Runnable() {
-                            TextureView tView = textureView;
+                        Log.i(TAG, "executing task");
+                        postBackgroundThread(new Runnable() {
+                            CameraPreview cPrev = cameraPreview;
 
                             @Override
                             public void run() {
-                                if (tView != null)
-                                    heavyWork(tView);
+                                heavyWork(cPrev);
                             }
                         });
                         prevTime = currTime;
                     }
                 }
             }
-        });
-
-        Log.i(TAG, "" + isMatch(Color.BLUE, Color.YELLOW));
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
+        }
+    });
 
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action = event.getAction();
@@ -198,7 +166,7 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            openCamera();
+            cameraPreview.openCamera();
         }
 
         @Override
@@ -217,7 +185,6 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            //new LongOperation().execute("");
             Log.i(TAG, "FPS: " + FPS);
 
             long currentTime = System.currentTimeMillis();
@@ -252,7 +219,6 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, "light level: " + event.values[0], Toast.LENGTH_SHORT);
                     msgSent = true;
                 }
-
             }
         }
 
@@ -261,175 +227,6 @@ public class MainActivity extends Activity {
 
         }
     };
-
-    private ImageReader.OnImageAvailableListener onImageAvailableListener = new ImageReader.OnImageAvailableListener() {
-        @Override
-        public void onImageAvailable(ImageReader reader) {
-            Image image = null;
-            try {
-                int height = image.getHeight();
-                int width = image.getWidth();
-
-                int searchRadius = 5;
-                int searchDiameter = searchRadius * 2;
-
-                int[] colors = new int[searchDiameter * searchDiameter];
-
-                int x = width / 2 - searchRadius;
-                int y = height / 2 - searchRadius;
-
-                Rect cropRect = new Rect(x - searchRadius, y + searchRadius, x + searchRadius, y + searchRadius);
-                image.setCropRect(cropRect);
-
-                image = reader.acquireLatestImage();
-                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                byte[] bytes = new byte[buffer.capacity()];
-                buffer.get(bytes);
-
-                BitmapFactory.decodeByteArray(bytes, 0, 0)
-                        .getPixels(colors, 0, searchDiameter, x, y, searchDiameter, searchDiameter);
-
-                color = getAverageColor(colors);
-
-                overlayView.setColor(color);
-
-                overlayView.drawFrame();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (image != null) {
-                    image.close();
-                }
-            }
-        }
-    };
-
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(CameraDevice camera) {
-            //This is called when the camera is open
-            Log.e(TAG, "onOpened");
-            cameraDevice = camera;
-            createCameraPreview();
-        }
-
-        @Override
-        public void onDisconnected(CameraDevice camera) {
-            cameraDevice.close();
-        }
-
-        @Override
-        public void onError(CameraDevice camera, int error) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-    };
-
-    protected void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-        onFrameThread.start();
-    }
-
-    protected void stopBackgroundThread() {
-
-        try {
-            if (mBackgroundThread != null) {
-                mBackgroundThread.quitSafely();
-                mBackgroundThread.join();
-            }
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-
-            running = false;
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void createCameraPreview() {
-        try {
-            SurfaceTexture texture = textureView.getSurfaceTexture();
-            assert texture != null;
-
-            int width = imageDimension.getWidth();
-            int height = imageDimension.getHeight();
-
-            texture.setDefaultBufferSize(width, height);
-
-            Surface surface = new Surface(texture);
-            captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            captureRequestBuilder.addTarget(surface);
-
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
-                @Override
-                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    //The camera is already closed
-                    if (null == cameraDevice) {
-                        return;
-                    }
-                    // When the session is ready, we start displaying the preview.
-                    cameraCaptureSessions = cameraCaptureSession;
-                    updatePreview();
-                }
-
-                @Override
-                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Toast.makeText(MainActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
-                }
-            }, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void openCamera() {
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
-        try {
-            cameraId = manager.getCameraIdList()[0];
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            assert map != null;
-            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                return;
-            }
-            manager.openCamera(cameraId, stateCallback, null);
-
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG, "openCamera X");
-    }
-
-    protected void updatePreview() {
-        if (null == cameraDevice) {
-            Log.e(TAG, "updatePreview error, return");
-        }
-        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-        try {
-            cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void closeCamera() {
-        if (null != cameraDevice) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-        if (null != imageReader) {
-            imageReader.close();
-            imageReader = null;
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -442,6 +239,31 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void startBackgroundThread() {
+        running = true;
+        handlerThread = new HandlerThread("Camera Preview Background");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
+    }
+
+    public void postBackgroundThread(Runnable r) {
+        handler.post(r);
+    }
+
+    public void stopBackgroundThread() {
+        running = false;
+        try {
+            if (handlerThread != null) {
+                handlerThread.quitSafely();
+                handlerThread.join();
+            }
+            handlerThread = null;
+            handler = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -449,36 +271,49 @@ public class MainActivity extends Activity {
         startBackgroundThread();
         mSensorManager.registerListener(sensorEventListener, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
-        if (textureView.isAvailable()) {
-            openCamera();
+        if (cameraPreview.isAvailable()) {
+            cameraPreview.openCamera();
         } else {
-            textureView.setSurfaceTextureListener(textureListener);
+            cameraPreview.setSurfaceTextureListener(textureListener);
         }
     }
 
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
-        closeCamera();
+        cameraPreview.closeCamera();
         mSensorManager.unregisterListener(sensorEventListener);
         stopBackgroundThread();
+
         super.onPause();
+    }
+
+    public Handler getHandler() {
+        return handler;
     }
 
     protected void onDestroy() {
         stopBackgroundThread();
-        closeCamera();
+        cameraPreview.closeCamera();
+        quit = true;
+        try {
+            if (onFrameThread != null)
+                onFrameThread.join();
+            onFrameThread = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
-    public void heavyWork(TextureView tView) {
-        Bitmap bmp = tView.getBitmap();
+    public void heavyWork(CameraPreview cPrev) {
+        Bitmap bmp = cPrev.getBitmap();
         if (bmp != null) {
             int searchRadius = 5;
             int searchDiameter = searchRadius * 2;
             int[] colors = new int[searchDiameter * searchDiameter];
-            int startX = tView.getWidth() / 2 - searchRadius;
-            int startY = tView.getHeight() / 2 - searchRadius;
+            int startX = cPrev.getWidth() / 2 - searchRadius;
+            int startY = cPrev.getHeight() / 2 - searchRadius;
 
             bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
 
@@ -488,123 +323,5 @@ public class MainActivity extends Activity {
 
             overlayView.drawFrame();
         }
-    }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }
-
-    public class LongOperation extends AsyncTask<String, Void, String> {
-
-        TextureView tView;
-
-        @Override
-        protected String doInBackground(String... params) {
-            if (tView != null)
-                heavyWork(tView);
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            tView = textureView;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-
-        }
-    }
-
-    public class FlingGestureListener implements GestureDetector.OnGestureListener {
-        private GestureDetectorCompat mDetector;
-        Animation slide_out_left, slide_out_right;
-        Animation slide_in_right, slide_in_left;
-        ViewFlipper viewFlipper;
-
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            float sensitvity = 50;
-
-            if((e1.getX() - e2.getX()) > sensitvity){
-                viewFlipper.setInAnimation(slide_in_right);
-                viewFlipper.setOutAnimation(slide_out_left);
-                viewFlipper.showPrevious();
-                Toast.makeText(MainActivity.this,
-                        "Previous", Toast.LENGTH_SHORT).show();
-            }else if((e2.getX() - e1.getX()) > sensitvity){
-                viewFlipper.setInAnimation(slide_in_left);
-                viewFlipper.setOutAnimation(slide_out_right);
-                viewFlipper.showNext();
-                Toast.makeText(MainActivity.this,
-                        "Next", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-
-        }
-
     }
 }

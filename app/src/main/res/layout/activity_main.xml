@@ -17,17 +17,42 @@
             android:layout_height="0dp"
             android:layout_weight="0.75">
 
-            <TextureView
-                android:id="@+id/texture"
+            <ViewFlipper
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"/>
+                android:id="@+id/viewflipper">
 
-            <com.example.home.camera.OverlayView
-                android:id="@+id/overlayView"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:background="@android:color/transparent"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.example.home.camera.CameraPreview
+                        android:id="@+id/cameraPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"/>
+
+                    <com.example.home.camera.OverlayView
+                        android:id="@+id/overlayView"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:background="@android:color/transparent"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.example.home.camera.ColorMatchView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </RelativeLayout>
+
+            </ViewFlipper>
+
+
 
         </RelativeLayout>
 

@@ -71,10 +71,10 @@ public class ColorView extends SurfaceView {
         color2 = color;
         speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         if(isMatch(color1,color2)){
-            speech.speak("It is a match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
         else{
-            speech.speak("Not a match. Please try again.",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            speech.speak("Not a match.",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
 
         }
         update();

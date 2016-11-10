@@ -99,7 +99,7 @@ public class ColorHelper {
 
         double[] white = {100.0, 0.0, 0.0};
 
-        double minDiff = 2.3;
+        double minDiff = 40.0;
 
         double d1 = getDeltaE(c1xyz, white);
         double d2 = getDeltaE(c2xyz, white);
