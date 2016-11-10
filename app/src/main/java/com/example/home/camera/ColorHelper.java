@@ -92,28 +92,6 @@ public class ColorHelper {
         return closestColor;
     }
 
-    //Returns true if two colours are a match
-    public static boolean isMatch(int color1, int color2){
-        double[] c1xyz = XYZtoCIELab(RGBtoXYZ(color1));
-        double[] c2xyz = XYZtoCIELab(RGBtoXYZ(color2));
-
-        double[] white = {100.0, 0.0, 0.0};
-
-        double minDiff = 40.0;
-
-        double d1 = getDeltaE(c1xyz, white);
-        double d2 = getDeltaE(c2xyz, white);
-
-        double average = (d1+d2)/2;
-
-        if (average-d1 <= minDiff && average-d1 > 0) {
-            return true;
-        }
-
-        return false;
-
-    }
-
     public static int getAverageColor(int[] colors) {
 
         int r = 0;
@@ -135,6 +113,137 @@ public class ColorHelper {
 
     public static String getColorName(int color) {
         return colorMap.get(color);
+    }
+
+    private static double[] colorToHSL(int color){
+        double H = 0;
+        double S = 0;
+        double L = 0;
+
+        double r1 = Color.red(color)/255.0;
+        double g1 = Color.green(color)/255.0;
+        double b1 = Color.blue(color)/255.0;
+
+        double min = Math.min(r1, Math.min(g1, b1));
+        double max = Math.max(r1, Math.max(g1, b1));
+
+        double delta_r1 = 0;
+        double delta_g1 = 0;
+        double delta_b1 = 0;
+        double delta_max = max - min;
+
+        L = (max + min)/2.0;
+
+        if(delta_max == 0){
+            H = 0;
+            S = 0;
+        }
+
+        else{
+            if(L<0.5){
+                S = delta_max/(max + min);
+            }
+            else{
+                S = delta_max/(2-max - min);
+            }
+            delta_r1 = (((max-r1)/6.0) + (delta_max/2.0))/delta_max;
+            delta_g1 = (((max-r1)/6.0) + (delta_max/2.0))/delta_max;
+            delta_b1 = (((max-r1)/6.0) + (delta_max/2.0))/delta_max;
+
+            if(r1 == max){
+                H = delta_b1 - delta_g1;
+            }
+            else if(g1 == max){
+                H = (1/3.0)+(delta_r1 - delta_b1);
+            }
+            else if(b1 == max){
+                H = (2/3.0)+(delta_g1 - delta_r1);
+            }
+
+            if(H < 0){
+                H += 1;
+            }
+
+            if(H > 1){
+                H -= 1;
+            }
+        }
+        return (new double[]{H,S,L});
+    }
+
+    private static double[] HSLtoRGB(double[] hslColor){
+        double h = hslColor[0];
+        double s = hslColor[1];
+        double l = hslColor[2];
+
+        double r = 0;
+        double g = 0;
+        double b = 0;
+
+        double v1 = 0;
+        double v2 = 0;
+
+        if(s == 0){
+            r =g=b=l;
+        }
+        else{
+            if(l < 0.5){
+                v2 = l * ( 1 + s );
+            }
+            else{
+                v2 =  (l + s ) - ( s * l) ;
+                v1 = 2 * l - v2;
+            }
+
+            r = 255 * Hue_2_RGB( v1, v2, h + ( 1 / 3.0 ) );
+            g = 255 * Hue_2_RGB( v1, v2, h );
+            b = 255 * Hue_2_RGB( v1, v2, h - ( 1 / 3.0 ) );
+
+        }
+
+        return(new double[]{r,g,b});
+    }
+
+
+
+    private static double Hue_2_RGB( double p, double q, double t )             //Function Hue_2_RGB
+    {
+        if(t < 0) t += 1;
+        if(t > 1) t -= 1;
+        if(t < 1/6.0) return p + (q - p) * 6 * t;
+        if(t < 1/2.0) return q;
+        if(t < 2/3.0) return p + (q - p) * (2/3.0 - t) * 6.0;
+        return p;
+    }
+
+    public static int calculateComplementaryColor(int c){
+        double[] hsl = colorToHSL(c);
+        double currHue = hsl[0];
+        double oppHue = currHue + 0.5;
+
+        if(oppHue > 1){
+            oppHue -=1;
+        }
+
+        double[] rgb = HSLtoRGB(new double[] {oppHue,hsl[1],hsl[2]});
+
+        return(Color.rgb((int)rgb[0],(int)rgb[1],(int)rgb[2]));
+
+    }
+
+    public static boolean isComplementaryMatch(int c1, int c2){
+        int complementryColor = calculateComplementaryColor(c1);
+        int closestComplementaryColor = getClosestColor(complementryColor);
+
+        int closestC2 = getClosestColor(c2);
+
+        double[] c1HSL = colorToHSL(c1);
+        double[] c2HSL = colorToHSL(c2);
+
+        if((closestComplementaryColor == closestC2)&&(c1HSL[2]!=c2HSL[2])){
+            return true;
+        }
+        return false;
     }
 
 }
