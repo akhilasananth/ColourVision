@@ -36,6 +36,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
 
 import static com.example.home.camera.ColorHelper.getAverageColor;
 
@@ -63,7 +64,8 @@ public class MainActivity extends Activity {
     private boolean quit = false;
     private ColorMatchView colorMatchView;
 
-    ViewFlipper viewFlipper;
+    private int color1;
+    private int color2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,6 @@ public class MainActivity extends Activity {
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
         onFrameThread.start();
 
         overlayView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
@@ -96,18 +97,13 @@ public class MainActivity extends Activity {
             }
             public void onSwipeRight() {
                 //Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
-                //Intent i = new Intent(getApplicationContext(), ColorMatchActivity.class);
-                //startActivity(i);
-                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_from_left));
-                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_to_right));
-                viewFlipper.showPrevious();
+                Intent i = new Intent(getApplicationContext(), ColorMatchActivity.class);
+                i.putExtra("Color1", color1);
+                i.putExtra("Color2", color2);
+                startActivity(i);
             }
             public void onSwipeLeft() {
-                //Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
-                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_from_right));
-                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_to_left));
-                viewFlipper.showNext();
-
+                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
             }
             public void onSwipeBottom() {
                 Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
@@ -121,20 +117,11 @@ public class MainActivity extends Activity {
             long prevTime = System.currentTimeMillis();
             running = true;
             while (!quit) {
-                if (!running) {
-
-                } else {
+                if (running) {
                     long currTime = System.currentTimeMillis();
                     if (currTime >= prevTime + 1000) {
                         Log.i(TAG, "executing task");
-                        postBackgroundThread(new Runnable() {
-                            CameraPreview cPrev = cameraPreview;
-
-                            @Override
-                            public void run() {
-                                heavyWork(cPrev);
-                            }
-                        });
+                        heavyWork(cameraPreview);
                         prevTime = currTime;
                     }
                 }
@@ -149,11 +136,13 @@ public class MainActivity extends Activity {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
                     colorView.setColor1(color);
+                    color1 = color;
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN) {
                     colorView.setColor2(color);
+                    color2 = color;
                 }
                 return true;
             default:

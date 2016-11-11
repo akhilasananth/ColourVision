@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.SparseArray;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by robertfernandes on 11/4/2016.
  */
@@ -46,9 +49,9 @@ public class ColorHelper {
     }
 
     public static double[] XYZtoCIELab(double[] XYZ) {
-        double x = XYZ[0];
-        double y = XYZ[1];
-        double z = XYZ[2];
+        double x = XYZ[0] / 95.047;
+        double y = XYZ[1] / 100.000;
+        double z = XYZ[2] / 108.883;
 
         x = (x > 0.008856) ? Math.pow(x, 1.0/3) : (7.787 * x) + (16/116);
         y = (y > 0.008856) ? Math.pow(y, 1.0/3) : (7.787 * y) + (16/116);
@@ -115,7 +118,7 @@ public class ColorHelper {
         return colorMap.get(color);
     }
 
-    protected static double[] colorToHSL(int color){
+    protected static double[] RGBtoHSL(int color){
         double H = 0;
         double S = 0;
         double L = 0;
@@ -204,9 +207,7 @@ public class ColorHelper {
         return(new double[]{r,g,b});
     }
 
-
-
-    protected static double Hue_2_RGB( double p, double q, double t )             //Function Hue_2_RGB
+    protected static double Hue_2_RGB( double p, double q, double t )
     {
         if(t < 0) t += 1;
         if(t > 1) t -= 1;
@@ -217,7 +218,7 @@ public class ColorHelper {
     }
 
     public static int calculateComplementaryColor(int c){
-        double[] hsl = colorToHSL(c);
+        double[] hsl = RGBtoHSL(c);
         double currHue = hsl[0];
         double oppHue = currHue + 0.5;
 
@@ -228,9 +229,16 @@ public class ColorHelper {
         double[] rgb = HSLtoRGB(new double[] {oppHue,hsl[1],hsl[2]});
 
         return(Color.rgb((int)rgb[0],(int)rgb[1],(int)rgb[2]));
-
     }
 
+    public static boolean isComplementaryMatch(int c1, int c2){
+        int compliment = calculateComplementaryColor(c1);
+        double distance = getDeltaE(XYZtoCIELab(RGBtoXYZ(c2)), XYZtoCIELab(RGBtoXYZ(compliment)));
+        return distance < 4.6;
+    }
 
-
+    public static boolean isGrayScale(int color){
+        double[] c = RGBtoHSL(color);
+        return c[1] <= 0.1;
+    }
 }

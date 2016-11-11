@@ -69,7 +69,7 @@ public class OverlayView extends SurfaceView {
     }
 
     public void drawColorInfo(Canvas canvas) {
-        paint.setColor(getResources().getColor(R.color.Whitesmoke));
+        paint.setColor(Color.WHITE);
         canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight()/10, paint);
 
         int height = canvas.getHeight()/10 - 10;

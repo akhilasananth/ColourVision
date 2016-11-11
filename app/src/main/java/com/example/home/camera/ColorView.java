@@ -8,19 +8,14 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.SurfaceView;
-import android.view.View;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
 
-import static com.example.home.camera.ColorHelper.*;
-import static com.example.home.camera.colorMatchCriterias.*;
+import static com.example.home.camera.ColorHelper.getClosestColor;
+import static com.example.home.camera.ColorHelper.getColorName;
+import static com.example.home.camera.ColorHelper.isComplementaryMatch;
+import static com.example.home.camera.ColorHelper.isGrayScale;
 
 
 /**
@@ -69,7 +64,7 @@ public class ColorView extends SurfaceView {
     public void setColor2(int color) {
         color2 = color;
         speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        if(isComplementaryMatch(color1,color2)|| isShadeOfBlackOrWhite(color2)){
+        if(isComplementaryMatch(color1,color2) && isGrayScale(color2)){
             speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
         else{
@@ -97,10 +92,4 @@ public class ColorView extends SurfaceView {
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
-
-    public boolean colorsMatch(int color1, int color2) {
-        //TODO
-        return false;
-    }
-
 }
