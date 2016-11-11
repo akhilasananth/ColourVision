@@ -115,7 +115,7 @@ public class ColorHelper {
         return colorMap.get(color);
     }
 
-    private static double[] colorToHSL(int color){
+    protected static double[] colorToHSL(int color){
         double H = 0;
         double S = 0;
         double L = 0;
@@ -171,7 +171,7 @@ public class ColorHelper {
         return (new double[]{H,S,L});
     }
 
-    private static double[] HSLtoRGB(double[] hslColor){
+    protected static double[] HSLtoRGB(double[] hslColor){
         double h = hslColor[0];
         double s = hslColor[1];
         double l = hslColor[2];
@@ -206,7 +206,7 @@ public class ColorHelper {
 
 
 
-    private static double Hue_2_RGB( double p, double q, double t )             //Function Hue_2_RGB
+    protected static double Hue_2_RGB( double p, double q, double t )             //Function Hue_2_RGB
     {
         if(t < 0) t += 1;
         if(t > 1) t -= 1;
@@ -231,19 +231,6 @@ public class ColorHelper {
 
     }
 
-    public static boolean isComplementaryMatch(int c1, int c2){
-        int complementryColor = calculateComplementaryColor(c1);
-        int closestComplementaryColor = getClosestColor(complementryColor);
 
-        int closestC2 = getClosestColor(c2);
-
-        double[] c1HSL = colorToHSL(c1);
-        double[] c2HSL = colorToHSL(c2);
-
-        if((closestComplementaryColor == closestC2)&&(c1HSL[2]!=c2HSL[2])){
-            return true;
-        }
-        return false;
-    }
 
 }

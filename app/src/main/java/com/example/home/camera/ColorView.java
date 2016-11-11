@@ -19,9 +19,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static com.example.home.camera.ColorHelper.getClosestColor;
-import static com.example.home.camera.ColorHelper.getColorName;
-import static com.example.home.camera.ColorHelper.isComplementaryMatch;
+import static com.example.home.camera.ColorHelper.*;
+import static com.example.home.camera.colorMatchCriterias.*;
 
 
 /**
@@ -70,7 +69,7 @@ public class ColorView extends SurfaceView {
     public void setColor2(int color) {
         color2 = color;
         speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        if(isComplementaryMatch(color1,color2)){
+        if(isComplementaryMatch(color1,color2)|| isShadeOfBlackOrWhite(color2)){
             speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
         else{
