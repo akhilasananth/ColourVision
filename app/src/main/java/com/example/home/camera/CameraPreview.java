@@ -15,7 +15,6 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.app.ActivityCompat;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Size;

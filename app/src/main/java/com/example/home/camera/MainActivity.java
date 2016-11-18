@@ -1,9 +1,5 @@
 package com.example.home.camera;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,24 +15,12 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
-import android.transition.Fade;
-import android.transition.Scene;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
-import android.widget.ViewSwitcher;
 
 import static com.example.home.camera.ColorHelper.getAverageColor;
 
@@ -62,7 +46,6 @@ public class MainActivity extends Activity {
     private boolean running = false;
 
     private boolean quit = false;
-    private ColorMatchView colorMatchView;
 
     private int color1;
     private int color2;
@@ -233,10 +216,6 @@ public class MainActivity extends Activity {
         handlerThread = new HandlerThread("Camera Preview Background");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
-    }
-
-    public void postBackgroundThread(Runnable r) {
-        handler.post(r);
     }
 
     public void stopBackgroundThread() {
