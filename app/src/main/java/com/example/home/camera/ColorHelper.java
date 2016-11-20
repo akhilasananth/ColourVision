@@ -66,6 +66,7 @@ public class ColorHelper {
         return CIELab;
     }
 
+    //takes in CIELab colors as inputs
     public static double getDeltaE(double[] color1, double[] color2) {
         return Math.sqrt(Math.pow(color2[0] - color1[0], 2) +
                 Math.pow(color2[1] - color1[1], 2) +
@@ -237,8 +238,35 @@ public class ColorHelper {
         return distance < 4.6;
     }
 
-    public static boolean isGrayScale(int color){
+    public static boolean isGrayScaleMatch(int color){
         double[] c = RGBtoHSL(color);
         return c[1] <= 0.1;
     }
+
+    //returns the other two colors in the triad
+    public static int[] getTriadColors(int color){
+        double[] hslColor = RGBtoHSL(color);
+        double[] rgbColor1 = HSLtoRGB(new double[]{hslColor[0]+120,hslColor[1],hslColor[2]});
+        double[] rgbColor2 = HSLtoRGB(new double[]{hslColor[0]-120,hslColor[1],hslColor[2]});
+        int color1 = Color.rgb((int)rgbColor1[0],(int)rgbColor1[1],(int)rgbColor1[2]);
+        int color2 = Color.rgb((int)rgbColor2[0],(int)rgbColor2[1],(int)rgbColor2[2]);
+
+        return(new int[]{color1,color2});
+    }
+
+    public static boolean isTriadMatch(int color1, int color2){
+        return(Arrays.asList(getTriadColors(color1)).contains(color2));
+    }
+
+    public static boolean isAnalogousMatch(int color1, int color2){
+        double deltaE = getDeltaE(XYZtoCIELab(RGBtoXYZ(color1)),XYZtoCIELab(RGBtoXYZ(color2)));
+        if(deltaE==2.3){
+            return true;
+        }
+        else if(deltaE>2.3 && deltaE<3){
+            return true;
+        }
+        return false;
+    }
+
 }
