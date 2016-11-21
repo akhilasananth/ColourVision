@@ -66,6 +66,79 @@ public class ColorHelper {
         return CIELab;
     }
 
+    public static double[] CIELabToXYZ(double[] CIELab){
+        double Y = ( CIELab[0] + 16 ) / 116;
+        double X = CIELab[1] / 500 + Y;
+        double Z = Y - CIELab[2] / 200;
+
+        if ( Math.pow(Y,3) > 0.008856 ){
+            Y = Math.pow(Y,3);
+        }
+        else {
+            Y = ( Y - 16 / 116 ) / 7.787;
+        }
+
+        if ( Math.pow(X,3) > 0.008856 ) X = Math.pow(X,3);
+        else{
+            X = ( X - 16 / 116 ) / 7.787;
+        }
+        if ( Math.pow(Z,3) > 0.008856 ){
+            Z = Math.pow(Z,3);
+        }
+        else {
+            Z = ( Z - 16 / 116 ) / 7.787;
+        }
+
+        X = 95.047 * X;
+        Y = 100.000 * Y;
+        Z = 108.883 * Z;
+
+        return (new double[]{X,Y,Z});
+    }
+
+    public static double[] XYZtoRGB(double[] XYZ){
+        double X=0.0,Y = 0.0,Z = 0.0;
+        
+        if(XYZ[0]>=0 && XYZ[0]<=95.047){
+            X = XYZ[0] / 100;
+        }
+        else if(XYZ[1]>=0 && XYZ[1]<=100.000){
+            Y = XYZ[1] / 100;
+        }
+        else if(XYZ[2]>=0 && XYZ[2]<=108.883){
+            Z = XYZ[2] / 100;
+        }
+
+        double R = X *  3.2406 + Y * -1.5372 + Z * -0.4986;
+        double G = X * -0.9689 + Y *  1.8758 + Z *  0.0415;
+        double B = X *  0.0557 + Y * -0.2040 + Z *  1.0570;
+
+        if ( R > 0.0031308 ){
+            R = 1.055 * ( Math.pow(R, ( 1 / 2.4 )) ) - 0.055;
+        }
+        else {
+            R = 12.92 * R;
+        }
+        if ( G > 0.0031308 ){
+            G = 1.055 * (Math.pow(G , ( 1 / 2.4 )) ) - 0.055;
+        }
+        else{
+            G = 12.92 * G;
+        }
+        if ( B > 0.0031308 ){
+            B = 1.055 * (Math.pow(B,( 1 / 2.4 )) ) - 0.055;
+        }
+        else{
+            B = 12.92 * B;
+        }
+
+        R = R * 255;
+        G = G * 255;
+        B = B * 255;
+
+        return (new double[]{R,G,B});
+    }
+
     //takes in CIELab colors as inputs
     public static double getDeltaE(double[] color1, double[] color2) {
         return Math.sqrt(Math.pow(color2[0] - color1[0], 2) +
@@ -238,9 +311,17 @@ public class ColorHelper {
         return distance < 4.6;
     }
 
-    public static boolean isGrayScaleMatch(int color){
-        double[] c = RGBtoHSL(color);
-        return c[1] <= 0.1;
+    public static boolean isGrayScaleMatch(int color1, int color2){
+        double[] c1 = RGBtoHSL(color1);
+        double[] c2 = RGBtoHSL(color2);
+
+        if(c1[1] <= 0.1 && c2[1] >= 0.1){
+            return true;
+        }
+        else if(c1[1] >= 0.1 && c2[1] <= 0.1){
+            return true;
+        }
+        return false;
     }
 
     //returns the other two colors in the triad
@@ -267,6 +348,59 @@ public class ColorHelper {
             return true;
         }
         return false;
+    }
+
+    public static int[] getAnalogousColors(int color,int numberOfColors){
+        int n = numberOfColors;
+        int count = 0;
+        int[] analogousColors = new int[]{};
+        double[] CIELABcolor = XYZtoCIELab(RGBtoXYZ(color));
+        while(n>0){
+            if(n%2 == 0) {
+                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] +2.3*n) , (CIELABcolor[1] +2.3*n), (CIELABcolor[2] +2.3*n)}));
+                analogousColors[count] = Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]);
+            }
+            else{
+                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] -2.3*n) , (CIELABcolor[1] -2.3*n), (CIELABcolor[2] -2.3*n)}));
+                analogousColors[count] = Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]);
+            }
+            n--;
+            count++;
+        }
+        return analogousColors;
+    }
+
+    public  static boolean isWarmMatch(int color1, int color2){
+        return (inWarmRange(color1) && inWarmRange(color2));
+    }
+
+    public static boolean isCoolMatch(int color1, int color2){
+        return (inCoolRange(color1)&& inCoolRange(color2));
+    }
+
+    //Assuming that the midpoint (or pure white) in the color temperature scale is 4800K
+    private static boolean inWarmRange(int color){
+        return(RGBtoCCT(color) < 4800);
+    }
+
+    private static boolean inCoolRange(int color){
+        return(RGBtoCCT(color) > 4800);
+    }
+
+    //CCT is correlated color temperature
+    private static double RGBtoCCT(int color){
+
+        double[] xyzColor = RGBtoXYZ(color);
+
+        //calculating normalized chromaticity values
+        double x = xyzColor[0]/(xyzColor[0]+ xyzColor[1]+xyzColor[2]);
+        double y = xyzColor[2]/(xyzColor[0]+ xyzColor[1]+xyzColor[2]);
+
+        //calculating CCT value
+        double n = (x-0.3320)/(0.1858-y);
+        double CCT = (449*Math.pow(n,3)) + (3525*Math.pow(n,2)) + (6823.3*n) + 5520.33;
+
+        return CCT;
     }
 
 }

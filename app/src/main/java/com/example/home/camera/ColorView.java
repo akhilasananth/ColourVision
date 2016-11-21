@@ -12,10 +12,7 @@ import android.view.SurfaceView;
 
 import java.util.Locale;
 
-import static com.example.home.camera.ColorHelper.getClosestColor;
-import static com.example.home.camera.ColorHelper.getColorName;
-import static com.example.home.camera.ColorHelper.isComplementaryMatch;
-import static com.example.home.camera.ColorHelper.isGrayScaleMatch;
+import static com.example.home.camera.ColorHelper.*;
 
 
 /**
@@ -24,8 +21,8 @@ import static com.example.home.camera.ColorHelper.isGrayScaleMatch;
 
 public class ColorView extends SurfaceView {
 
-    private int color1 = Color.BLACK;
-    private int color2 = Color.BLACK;
+    private static int color1 = Color.BLACK;
+    private static int color2 = Color.BLACK;
     private Paint paint = new Paint();
 
     private TextToSpeech speech;
@@ -64,14 +61,51 @@ public class ColorView extends SurfaceView {
     public void setColor2(int color) {
         color2 = color;
         speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        if(isComplementaryMatch(color1,color2) && isGrayScaleMatch(color2)){
-            speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        isMatchTTS();
+        update();
+    }
+
+    public static int getColor1(){
+        return(color1);
+    }
+
+    public static int getColor2(){
+        return(color2);
+    }
+
+    private void isMatchTTS(){
+        if(isComplementaryMatch(color1,color2)
+                || isGrayScaleMatch(color1,color2)
+                || isAnalogousMatch(color1,color2)
+                || isTriadMatch(color1,color2)
+                || isWarmMatch(color1,color2)
+                || isCoolMatch(color1,color2)){
+
+            //These if statements are just for testing
+            if(isComplementaryMatch(color1,color2)){
+                speech.speak("Comp Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            }
+            else if(isGrayScaleMatch(color1,color2)){
+                speech.speak("Grey Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            }
+            else if(isAnalogousMatch(color1,color2)){
+                speech.speak(" Side Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            }
+            else if(isTriadMatch(color1,color2)){
+                speech.speak("Triad Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            }
+            else if(isWarmMatch(color1,color2)){
+                speech.speak("Warm Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            }
+            else if(isCoolMatch(color1,color2)){
+                speech.speak("Cool Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+            }
+            //speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
         else{
             speech.speak("Not a match.",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
 
         }
-        update();
     }
 
     public void update() {

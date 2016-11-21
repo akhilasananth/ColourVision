@@ -9,7 +9,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
-
+import static com.example.home.camera.ColorHelper.*;
+import static com.example.home.camera.ColorView.*;
 /**
  * Created by robertfernandes on 11/9/2016.
  */
@@ -98,9 +99,17 @@ public class ColorMatchActivity extends Activity {
         colorView.setColor1(c1);
         colorView.setColor1(c2);
 
-        color1.setBackgroundColor(Color.GREEN);
-        color2.setBackgroundColor(Color.RED);
-        color3.setBackgroundColor(Color.BLUE);
-        color4.setBackgroundColor(Color.YELLOW);
+        int[] triadColors = getTriadColors(getColor1());
+        int[] analogousColors = getAnalogousColors(getColor1(),2);
+        if(!isTriadMatch(getColor1(),getColor2())) {
+            color1.setBackgroundColor(triadColors[0]);
+            color2.setBackgroundColor(triadColors[1]);
+        }
+
+        if(!isAnalogousMatch(getColor1(),getColor2())){
+            color3.setBackgroundColor(analogousColors[0]);
+            color4.setBackgroundColor(analogousColors[1]);
+        }
+
     }
 }
