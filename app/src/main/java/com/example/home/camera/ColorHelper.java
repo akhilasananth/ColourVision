@@ -315,13 +315,22 @@ public class ColorHelper {
         double[] c1 = RGBtoHSL(color1);
         double[] c2 = RGBtoHSL(color2);
 
-        if(c1[1] <= 0.1 && c2[1] >= 0.1){
+        if(c1[1] <= 0.1 && c2[1] >= 0.1 ){
             return true;
         }
         else if(c1[1] >= 0.1 && c2[1] <= 0.1){
             return true;
         }
+        else if(c1[1] <= 0.1 && c2[1] <= 0.1 && isSaturationMatch(color1,color2)){
+            return true;
+        }
         return false;
+    }
+
+    public static boolean isSaturationMatch(int color1, int color2){
+        double[] c1 = RGBtoHSL(color1);
+        double[] c2 = RGBtoHSL(color2);
+        return (Math.abs(c1[2]-c2[2])>=80);
     }
 
     //returns the other two colors in the triad
@@ -380,15 +389,25 @@ public class ColorHelper {
 
     //Assuming that the midpoint (or pure white) in the color temperature scale is 4800K
     private static boolean inWarmRange(int color){
-        return(RGBtoCCT(color) < 4800);
+        float[] hsvColor = new float[3];
+        Color.colorToHSV(color,hsvColor);
+        if(hsvColor[0]<90 && hsvColor[0]>=270 ){
+            return true;
+        }
+        return false;
     }
 
     private static boolean inCoolRange(int color){
-        return(RGBtoCCT(color) > 4800);
+        float[] hsvColor = new float[3];
+        Color.colorToHSV(color,hsvColor);
+        if(hsvColor[0]>=90 && hsvColor[0]<270 ){
+            return true;
+        }
+        return false;
     }
 
     //CCT is correlated color temperature
-    private static double RGBtoCCT(int color){
+ /*   private static double RGBtoCCT(int color){
 
         double[] xyzColor = RGBtoXYZ(color);
 
@@ -401,6 +420,6 @@ public class ColorHelper {
         double CCT = (449*Math.pow(n,3)) + (3525*Math.pow(n,2)) + (6823.3*n) + 5520.33;
 
         return CCT;
-    }
+    }*/
 
 }
