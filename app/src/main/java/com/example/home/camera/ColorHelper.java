@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.SparseArray;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -359,24 +360,23 @@ public class ColorHelper {
         return false;
     }
 
-    public static int[] getAnalogousColors(int color,int numberOfColors){
+    public static Integer[] getAnalogousColors(int color, int numberOfColors){
         int n = numberOfColors;
-        int count = 0;
-        int[] analogousColors = new int[]{};
+        ArrayList<Integer> analogousColors = new ArrayList<Integer>();
         double[] CIELABcolor = XYZtoCIELab(RGBtoXYZ(color));
         while(n>0){
             if(n%2 == 0) {
                 double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] +2.3*n) , (CIELABcolor[1] +2.3*n), (CIELABcolor[2] +2.3*n)}));
-                analogousColors[count] = Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]);
+                analogousColors.add(Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]));
             }
             else{
                 double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] -2.3*n) , (CIELABcolor[1] -2.3*n), (CIELABcolor[2] -2.3*n)}));
-                analogousColors[count] = Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]);
+                analogousColors.add(Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]));
             }
             n--;
-            count++;
+
         }
-        return analogousColors;
+        return analogousColors.toArray(new Integer[analogousColors.size()]);
     }
 
     public  static boolean isWarmMatch(int color1, int color2){

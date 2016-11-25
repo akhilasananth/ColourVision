@@ -100,17 +100,21 @@ public class ColorMatchActivity extends Activity {
         colorView.setColor1(c2);
 
         int[] triadColors = getTriadColors(colorView.getColor1());
-        int[] analogousColors = getAnalogousColors(colorView.getColor1(),2);
+        Integer[] analogousColors = getAnalogousColors(colorView.getColor1(),2);
         if(!isTriadMatch(colorView.getColor1(),colorView.getColor2())) {
             color1.setBackgroundColor(triadColors[0]);
             color2.setBackgroundColor(triadColors[1]);
+            color3.setBackgroundColor(Color.GREEN);
+            color4.setBackgroundColor(Color.YELLOW);
         }
 
         if(!isAnalogousMatch(colorView.getColor1(),colorView.getColor2())){
+            color1.setBackgroundColor(Color.RED);
+            color2.setBackgroundColor(Color.BLUE);
             color3.setBackgroundColor(analogousColors[0]);
             color4.setBackgroundColor(analogousColors[1]);
         }
-        else{
+        else {
             color1.setBackgroundColor(Color.RED);
             color2.setBackgroundColor(Color.BLUE);
             color3.setBackgroundColor(Color.GREEN);
