@@ -158,6 +158,7 @@ public class CameraPreview extends TextureView {
         if (cameraDevice != null) {
             cameraDevice.close();
             cameraDevice = null;
+
         }
     }
 

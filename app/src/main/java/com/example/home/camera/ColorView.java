@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import static com.example.home.camera.ColorHelper.*;
@@ -20,11 +21,9 @@ import static com.example.home.camera.ColorHelper.*;
  */
 
 public class ColorView extends SurfaceView {
-    private static int RED_Correction = 0x2C;
-    private static int GREEN_Correction = 0x3C;
-    private static int BLUE_Correction = 0x3C;
-    private static int WHITE = 0xFF;
 
+    private static int WHITE = 0xFF;
+    private static double[] correctionValues =  {2.1794871794871797, 2.217391304347826, 2.056451612903226};
     private int color1 = Color.BLACK;
     private int color2 = Color.BLACK;
     private Paint paint = new Paint();
@@ -60,9 +59,9 @@ public class ColorView extends SurfaceView {
         color1 = color;
         Log.println(Log.INFO, "TAG", "Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
 
-        color1 = Color.rgb(Math.min(WHITE, Color.red(color1) + RED_Correction), Math.min(WHITE, Color.green(color1) + GREEN_Correction), Math.min(WHITE,Color.blue(color1) + BLUE_Correction));
+        color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
 
-        Log.println(Log.INFO, "TAG", "Corrected Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
+        Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
         speech.speak(getColorName(getClosestColor(color1)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
     }
@@ -71,9 +70,9 @@ public class ColorView extends SurfaceView {
         color2 = color;
         Log.println(Log.INFO, "TAG", "Color2 value " + String.format("#%06X", (0xFFFFFF & color2)));
 
-        color2 = Color.rgb(Math.min(WHITE, Color.red(color2) + RED_Correction), Math.min(WHITE, Color.green(color2) + GREEN_Correction), Math.min(WHITE,Color.blue(color2) + BLUE_Correction));
+        color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
 
-        Log.println(Log.INFO, "TAG", "Corrected Color1 value " + String.format("#%06X", (0xFFFFFF & color2) ));
+        Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
         speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         isMatchTTS();
         update();
@@ -150,5 +149,14 @@ public class ColorView extends SurfaceView {
 
             getHolder().unlockCanvasAndPost(canvas);
         }
+    }
+
+    public double[] calculateCorrection(int color){
+        double[] rgbCorrectionValues = new double[3];
+        rgbCorrectionValues[0] = 1+((Color.red(color)*1.0)/(WHITE-Color.red(color)));
+        rgbCorrectionValues[1] = 1+((Color.green(color)*1.0)/(WHITE-Color.green(color)));
+        rgbCorrectionValues[2] = 1+((Color.blue(color)*1.0)/(WHITE-Color.blue(color)));
+
+        return rgbCorrectionValues;
     }
 }

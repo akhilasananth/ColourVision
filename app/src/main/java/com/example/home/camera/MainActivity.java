@@ -250,11 +250,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
-        cameraPreview.closeCamera();
-        mSensorManager.unregisterListener(sensorEventListener);
-        stopBackgroundThread();
-
         super.onPause();
+        cameraPreview.closeCamera();
+
+        /*mSensorManager.unregisterListener(sensorEventListener);
+        stopBackgroundThread();*/
+
     }
 
     public Handler getHandler() {
