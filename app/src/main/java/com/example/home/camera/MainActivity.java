@@ -139,6 +139,7 @@ public class MainActivity extends Activity {
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
             cameraPreview.openCamera();
+
         }
 
         @Override
@@ -157,7 +158,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            Log.i(TAG, "FPS: " + FPS);
+            //Log.i(TAG, "FPS: " + FPS);
 
             long currentTime = System.currentTimeMillis();
 
@@ -179,7 +180,7 @@ public class MainActivity extends Activity {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                Log.i("light level: ", "" + event.values[0]);
+                //Log.i("light level: ", "" + event.values[0]);
                 if (event.values[0] > threshold) {
                     darkFlag = true;
                 } else {

@@ -20,6 +20,10 @@ import static com.example.home.camera.ColorHelper.*;
  */
 
 public class ColorView extends SurfaceView {
+    private static int RED_Correction = 0x2C;
+    private static int GREEN_Correction = 0x3C;
+    private static int BLUE_Correction = 0x3C;
+    private static int WHITE = 0xFF;
 
     private int color1 = Color.BLACK;
     private int color2 = Color.BLACK;
@@ -54,13 +58,23 @@ public class ColorView extends SurfaceView {
 
     public void setColor1(int color) {
         color1 = color;
-        speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        Log.println(Log.INFO, "TAG", "Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
+
+        color1 = Color.rgb(Math.min(WHITE, Color.red(color1) + RED_Correction), Math.min(WHITE, Color.green(color1) + GREEN_Correction), Math.min(WHITE,Color.blue(color1) + BLUE_Correction));
+
+        Log.println(Log.INFO, "TAG", "Corrected Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
+        speech.speak(getColorName(getClosestColor(color1)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
     }
 
     public void setColor2(int color) {
         color2 = color;
-        speech.speak(getColorName(getClosestColor(color)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        Log.println(Log.INFO, "TAG", "Color2 value " + String.format("#%06X", (0xFFFFFF & color2)));
+
+        color2 = Color.rgb(Math.min(WHITE, Color.red(color2) + RED_Correction), Math.min(WHITE, Color.green(color2) + GREEN_Correction), Math.min(WHITE,Color.blue(color2) + BLUE_Correction));
+
+        Log.println(Log.INFO, "TAG", "Corrected Color1 value " + String.format("#%06X", (0xFFFFFF & color2) ));
+        speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         isMatchTTS();
         update();
     }

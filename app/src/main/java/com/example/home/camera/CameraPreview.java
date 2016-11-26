@@ -68,6 +68,7 @@ public class CameraPreview extends TextureView {
         public void onOpened(CameraDevice camera) {
             Log.e(TAG, "onOpened");
             cameraDevice = camera;
+
             createCameraPreview();
         }
 
@@ -116,6 +117,7 @@ public class CameraPreview extends TextureView {
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_ON);
             captureRequestBuilder.addTarget(surface);
+            captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
 
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
 
