@@ -346,7 +346,7 @@ public class ColorHelper {
     }
 
     public static boolean isTriadMatch(int color1, int color2){
-        return(Arrays.asList(getTriadColors(color1)).contains(color2));
+        return((Arrays.asList(getTriadColors(color1)).contains(color2)) && (color1 != color2));
     }
 
     public static boolean isAnalogousMatch(int color1, int color2){
