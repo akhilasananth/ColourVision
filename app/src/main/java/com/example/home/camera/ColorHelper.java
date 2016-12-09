@@ -391,7 +391,7 @@ public class ColorHelper {
     private static boolean inWarmRange(int color){
         float[] hsvColor = new float[3];
         Color.colorToHSV(color,hsvColor);
-        if(hsvColor[0]<90 && hsvColor[0]>=270 ){
+        if((hsvColor[0]<=90 && hsvColor[0]>=0) && (hsvColor[0]>270) ){
             return true;
         }
         return false;
@@ -400,7 +400,7 @@ public class ColorHelper {
     private static boolean inCoolRange(int color){
         float[] hsvColor = new float[3];
         Color.colorToHSV(color,hsvColor);
-        if(hsvColor[0]>=90 && hsvColor[0]<270 ){
+        if(hsvColor[0]>90 && hsvColor[0]<=270 ){
             return true;
         }
         return false;
