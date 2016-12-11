@@ -316,7 +316,8 @@ public class ColorHelper {
             hue -=180;
         }
         double[] rgbColor = HSLtoRGB(new double[]{hue,hslColor[1],hslColor[2]});
-
+        int color = Color.rgb((int)rgbColor[0],(int)rgbColor[1],(int)rgbColor[2]);
+        return color;
     }
     public static boolean isComplementaryMatch(int c1, int c2){
         double[] color1 = RGBtoHSL(c1);
@@ -324,7 +325,7 @@ public class ColorHelper {
        // int compliment = calculateComplementaryColor(c1);
         //double distance = getDeltaE(XYZtoCIELab(RGBtoXYZ(c2)), XYZtoCIELab(RGBtoXYZ(compliment)));
         //(distance < 4.6)
-        return ( && (color1[2] != color2[2]));
+        return ( c2 == getComplementaryColor(c1) && (color1[2] != color2[2]));
     }
 
     public static boolean isGrayScaleMatch(int color1, int color2){
