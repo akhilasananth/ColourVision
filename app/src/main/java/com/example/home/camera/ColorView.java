@@ -95,8 +95,7 @@ public class ColorView extends SurfaceView {
                 || isAnalogousMatch(color1,color2)
                 || isTriadMatch(color1,color2)
                 || isWarmMatch(color1,color2)
-                || isCoolMatch(color1,color2)
-                || isSaturationMatch(color1,color2)){
+                || isCoolMatch(color1,color2)){
 
             //These if statements are just for testing
             if(isComplementaryMatch(color1,color2)){
@@ -123,10 +122,7 @@ public class ColorView extends SurfaceView {
                 boolean b6 = isCoolMatch(color1,color2);
                 speech.speak("Cool Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
             }
-            else if(isSaturationMatch(color1,color2)){
-                boolean b6 = isSaturationMatch(color1,color2);
-                speech.speak("Sat Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-            }
+
             //speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
         else{

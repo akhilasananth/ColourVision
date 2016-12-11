@@ -292,7 +292,7 @@ public class ColorHelper {
         return p;
     }
 
-    public static int calculateComplementaryColor(int c){
+  /*  public static int calculateComplementaryColor(int c){
         double[] hsl = RGBtoHSL(c);
         double currHue = hsl[0];
         double oppHue = currHue + 0.5;
@@ -305,34 +305,47 @@ public class ColorHelper {
 
         return(Color.rgb((int)rgb[0],(int)rgb[1],(int)rgb[2]));
     }
+*/
+    public static int getComplementaryColor(int c1){
+        double[] hslColor = RGBtoHSL(c1);
+        double hue = hslColor[0];
+        if(hue<=180){
+            hue +=180;
+        }
+        else{
+            hue -=180;
+        }
+        double[] rgbColor = HSLtoRGB(new double[]{hue,hslColor[1],hslColor[2]});
 
+    }
     public static boolean isComplementaryMatch(int c1, int c2){
-        int compliment = calculateComplementaryColor(c1);
-        double distance = getDeltaE(XYZtoCIELab(RGBtoXYZ(c2)), XYZtoCIELab(RGBtoXYZ(compliment)));
-        return distance < 4.6;
+        double[] color1 = RGBtoHSL(c1);
+        double[] color2 = RGBtoHSL(c2);
+       // int compliment = calculateComplementaryColor(c1);
+        //double distance = getDeltaE(XYZtoCIELab(RGBtoXYZ(c2)), XYZtoCIELab(RGBtoXYZ(compliment)));
+        //(distance < 4.6)
+        return ( && (color1[2] != color2[2]));
     }
 
     public static boolean isGrayScaleMatch(int color1, int color2){
         double[] c1 = RGBtoHSL(color1);
         double[] c2 = RGBtoHSL(color2);
+        boolean c1IslowSaturation = c1[2] <=10;
+        boolean c2IslowSaturation = c2[2] <=10;
 
-        if(c1[1] <= 0.1 && c2[1] >= 0.1 ){
+        if((c1[1] <= 0.1 && c1IslowSaturation) && c2[1] >= 0.1 ){
             return true;
         }
-        else if(c1[1] >= 0.1 && c2[1] <= 0.1){
+        else if(c1[1] >= 0.1 && (c2[1] <= 0.1 && c2IslowSaturation)){
             return true;
         }
-        else if(c1[1] <= 0.1 && c2[1] <= 0.1 && isSaturationMatch(color1,color2)){
+        else if((c1[1] <= 0.1 && c2[1] <= 0.1 )&& (c1IslowSaturation && c2IslowSaturation) && color1 != color2){
             return true;
         }
         return false;
     }
 
-    public static boolean isSaturationMatch(int color1, int color2){
-        double[] c1 = RGBtoHSL(color1);
-        double[] c2 = RGBtoHSL(color2);
-        return (Math.abs(c1[2]-c2[2])>=80);
-    }
+
 
     //returns the other two colors in the triad
     public static int[] getTriadColors(int color){
