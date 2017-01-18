@@ -12,6 +12,7 @@ import android.view.SurfaceView;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Random;
 
 import static com.example.home.camera.ColorHelper.*;
 
@@ -21,6 +22,14 @@ import static com.example.home.camera.ColorHelper.*;
  */
 
 public class ColorView extends SurfaceView {
+
+    private static final String Comp = "Comp Match";
+    private static final String Grey = "Grey Match";
+    private static final String Side = "Side Match";
+    private static final String Triad = "Triad Match";
+    private static final String Warm = "Warm Match";
+    private static final String Cool = "Cool Match";
+    private static final String Not = "Not a Match";
 
     private static int WHITE = 0xFF;
     private static double[] correctionValues =  {2.1794871794871797, 2.217391304347826, 2.056451612903226};
@@ -89,6 +98,10 @@ public class ColorView extends SurfaceView {
         return(color2);
     }
 
+    private void speak(String sp) {
+        speech.speak(sp, TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+    }
+
     private void isMatchTTS(){
         if(isComplementaryMatch(color1,color2)
                 || isGrayScaleMatch(color1,color2)
@@ -98,36 +111,22 @@ public class ColorView extends SurfaceView {
                 || isCoolMatch(color1,color2)){
 
             //These if statements are just for testing
+
             if(isComplementaryMatch(color1,color2)){
-                boolean b1 = isComplementaryMatch(color1,color2);
-                speech.speak("Comp Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+                speak(Comp);
+            } else if(isGrayScaleMatch(color1,color2)){
+                speak(Grey);
+            } else if(isAnalogousMatch(color1,color2)){
+                speak(Side);
+            } else if(isTriadMatch(color1,color2)){
+                speak(Triad);
+            } else if(isWarmMatch(color1,color2)){
+                speak(Warm);
+            } else if(isCoolMatch(color1,color2)){
+                speak(Cool);
             }
-            else if(isGrayScaleMatch(color1,color2)){
-                boolean b2 = isGrayScaleMatch(color1,color2);
-                speech.speak("Grey Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-            }
-            else if(isAnalogousMatch(color1,color2)){
-                boolean b3 = isAnalogousMatch(color1,color2);
-                speech.speak(" Side Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-            }
-            else if(isTriadMatch(color1,color2)){
-                boolean b4 = isTriadMatch(color1,color2);
-                speech.speak("Triad Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-            }
-            else if(isWarmMatch(color1,color2)){
-                boolean b5 = isWarmMatch(color1,color2);
-                speech.speak("Warm Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-            }
-            else if(isCoolMatch(color1,color2)){
-                boolean b6 = isCoolMatch(color1,color2);
-                speech.speak("Cool Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-            }
-
-            //speech.speak("Match",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        }
-        else{
-            speech.speak("Not a match.",TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-
+        } else {
+            speak(Not);
         }
     }
 

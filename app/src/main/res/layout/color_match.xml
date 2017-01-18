@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.home.camera.ColorMatchActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,53 +12,40 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:weightSum="1"
-            android:layout_weight="0.75">
-            <LinearLayout
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="0.5"
+            android:weightSum="1">
+            <SurfaceView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_weight="0.5"
-                android:weightSum="1">
-                <SurfaceView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/color1"/>
-                <SurfaceView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/color2"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+                android:id="@+id/color1"/>
+            <SurfaceView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_weight="0.5"
-                android:weightSum="1">
-                <SurfaceView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/color3"/>
-                <SurfaceView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/color4"/>
+                android:id="@+id/color2"/>
 
-            </LinearLayout>
         </LinearLayout>
 
-        <com.example.home.camera.ColorView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/colorView"
-            android:layout_weight="0.25"/>
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="0.5"
+            android:weightSum="1">
+            <SurfaceView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:id="@+id/color3"/>
+            <SurfaceView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:id="@+id/color4"/>
+
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

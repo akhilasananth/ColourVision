@@ -7,10 +7,15 @@
     tools:context="com.example.home.camera.MainActivity">
 
     <com.example.home.camera.CameraPreview
+        android:id="@+id/cameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"/>
+
+    <com.example.home.camera.OverlayView
+        android:id="@+id/overlayView"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/cameraPreview">
-
-    </com.example.home.camera.CameraPreview>
+        android:background="@android:color/transparent"/>
 
 </RelativeLayout>

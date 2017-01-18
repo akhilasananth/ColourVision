@@ -10,9 +10,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import static com.example.home.camera.ColorHelper.RGBtoXYZ;
-import static com.example.home.camera.ColorHelper.XYZtoCIELab;
-import static com.example.home.camera.ColorHelper.getDeltaE;
+import static com.example.home.camera.ColorHelper.getClosestColor;
 import static com.example.home.camera.ColorHelper.getColorName;
 
 /**
@@ -99,22 +97,5 @@ public class OverlayView extends SurfaceView {
 
     public void setColor(int color) {
         mColor = color;
-    }
-
-    public int getClosestColor(int color) {
-        int closestColor = 0;
-        double currentDistance = Double.MAX_VALUE;
-
-        for(String x : getResources().getStringArray(R.array.values)){;
-            int currentColor = Color.parseColor(x);
-
-            double tempDistance = getDeltaE(XYZtoCIELab(RGBtoXYZ(currentColor)), XYZtoCIELab(RGBtoXYZ(color)));
-
-            if(tempDistance < currentDistance){
-                currentDistance = tempDistance;
-                closestColor = currentColor;
-            }
-        }
-        return closestColor;
     }
 }

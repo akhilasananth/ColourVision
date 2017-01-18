@@ -39,7 +39,7 @@ public class CameraPreview extends TextureView {
     private CaptureRequest.Builder captureRequestBuilder;
     private CameraCaptureSession cameraCaptureSession;
 
-    private MainActivity mainActivity;
+    private Activity activity;
 
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
@@ -60,8 +60,46 @@ public class CameraPreview extends TextureView {
     }
 
     private void init(Context context) {
-        mainActivity = (MainActivity)context;
+        activity = (Activity) context;
+        setSurfaceTextureListener(textureListener);
     }
+
+    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            //open your camera here
+            openCamera();
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            // Transform you image captured size according to the surface width and height
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            return false;
+        }
+
+        int frames = 0;
+        int FPS = 0;
+        long prevTime = System.currentTimeMillis();
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            //Log.i(TAG, "FPS: " + FPS);
+
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime >= prevTime + 1000) {
+                prevTime = currentTime;
+                FPS = frames;
+                frames = 0;
+            }
+            frames++;
+        }
+    };
 
     private CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
@@ -83,7 +121,7 @@ public class CameraPreview extends TextureView {
     };
 
     public void openCamera() {
-        CameraManager manager = (CameraManager) mainActivity.getSystemService(Context.CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[0];
@@ -92,8 +130,8 @@ public class CameraPreview extends TextureView {
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
 
-            if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
 
@@ -117,7 +155,8 @@ public class CameraPreview extends TextureView {
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_ON);
             captureRequestBuilder.addTarget(surface);
-            captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
+
+            //captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
 
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
 
@@ -132,7 +171,7 @@ public class CameraPreview extends TextureView {
 
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
-                    Toast.makeText(mainActivity, "ERROR", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "ERROR", Toast.LENGTH_SHORT).show();
                 }
             }, null);
 
@@ -148,7 +187,7 @@ public class CameraPreview extends TextureView {
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
         try {
-            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, mainActivity.getHandler());
+            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,5 +201,22 @@ public class CameraPreview extends TextureView {
         }
     }
 
+    public void startBackgroundThread() {
+        backgroundThread = new HandlerThread("Camera Preview Background");
+        backgroundThread.start();
+        backgroundHandler = new Handler(backgroundThread.getLooper());
+    }
 
+    public void stopBackgroundThread() {
+        try {
+            if (backgroundThread != null) {
+                backgroundThread.quitSafely();
+                backgroundThread.join();
+            }
+            backgroundThread = null;
+            backgroundHandler = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

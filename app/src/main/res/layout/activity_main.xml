@@ -7,29 +7,27 @@
     tools:context="com.example.home.camera.MainActivity">
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="1">
 
-        <RelativeLayout
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.75">
+            android:layout_alignParentTop = "true"
+            android:layout_weight="0.75"/>
 
-            <com.example.home.camera.CameraPreview
-                android:id="@+id/cameraPreview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"/>
-
-            <com.example.home.camera.OverlayView
-                android:id="@+id/overlayView"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:background="@android:color/transparent"/>
-
-        </RelativeLayout>
+        <!--
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_weight="0.75"/>
+        -->
 
         <com.example.home.camera.ColorView
             android:id="@+id/colorView"
