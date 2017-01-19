@@ -1,17 +1,14 @@
 package com.example.home.camera;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.*;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -29,6 +26,8 @@ public class MainActivity extends FragmentActivity {
     private ViewPager viewPager;
     private ScreenSlidePagerAdapter pagerAdapter;
 
+    private SQLiteDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +37,8 @@ public class MainActivity extends FragmentActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.activity_main);
+
+        setupDatabase();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -95,6 +96,11 @@ public class MainActivity extends FragmentActivity {
             default:
                 return super.dispatchKeyEvent(event);
         }
+    }
+
+    public void setupDatabase() {
+        database = openOrCreateDatabase("database", MODE_PRIVATE, null);
+        database.execSQL("CREATE TABLE IF NOT EXISTS Item(Id INTEGER, color INTEGER)");
     }
 
     @Override

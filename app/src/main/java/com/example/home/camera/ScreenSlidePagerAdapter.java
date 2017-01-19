@@ -10,18 +10,21 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final int NUM_PAGES = 2;
+    private static final int NUM_PAGES = 3;
 
     private static final int COLORMATCH = 0;
     private static final int CAMERAPREVIEW = 1;
+    private static final int ITEMVIEW = 2;
 
     private CameraFragment cameraFragment;
     private ColorMatchFragment colorMatchFragment;
+    private ItemFragment itemFragment;
 
     public ScreenSlidePagerAdapter(FragmentManager fm) {
         super(fm);
         cameraFragment = new CameraFragment();
         colorMatchFragment = new ColorMatchFragment();
+        itemFragment = new ItemFragment();
     }
 
     @Override
@@ -31,6 +34,8 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
                 return colorMatchFragment;
             case CAMERAPREVIEW:
                 return cameraFragment;
+            case ITEMVIEW:
+                return itemFragment;
             default:
                 return null;
         }
