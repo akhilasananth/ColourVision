@@ -1,5 +1,8 @@
 package com.example.home.camera.colorHelper;
 
+import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+
 import java.util.*;
 
 /**
@@ -8,11 +11,14 @@ import java.util.*;
 
 public class Matcher {
 
+    private TextToSpeech speech;
+
     enum MatchType {
         Complimentary, Analogous, Triad
     }
 
     public MatchingAlgorithm selectStrategy() {
+
         return null;
     }
 
@@ -33,6 +39,7 @@ public class Matcher {
                 return null;
         }
     }
+
 
     public List<Integer> getMatchingColors(int color) {
         MatchingAlgorithm ma = new ComplimentaryAlgorithm();

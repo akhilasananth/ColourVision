@@ -13,6 +13,7 @@ import static com.example.home.camera.colorHelper.ColorHelper.*;
  * Created by robertfernandes on 1/20/2017.
  */
 public class AnalogousAlgorithm implements MatchingAlgorithm {
+    private double visibleDifference = 2.3;
     @Override
     public List<Integer> getMatchingColors(int color) {
         int n = 2;
@@ -34,6 +35,9 @@ public class AnalogousAlgorithm implements MatchingAlgorithm {
     @Override
     public boolean isMatch(int color1, int color2) {
         double deltaE = getDeltaE(XYZtoCIELab(RGBtoXYZ(color1)),XYZtoCIELab(RGBtoXYZ(color2)));
-        return (deltaE == 2.3 || (deltaE > 2.3 && deltaE < 3));
+        if(deltaE>=visibleDifference && deltaE<=visibleDifference*4) {
+            return true;
+        }
+        return false;
     }
 }

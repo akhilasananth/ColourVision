@@ -1,5 +1,6 @@
 package com.example.home.camera;
 
+
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -21,6 +22,9 @@ import java.util.Locale;
 import static com.example.home.camera.colorHelper.ColorHelper.getClosestColor;
 import static com.example.home.camera.colorHelper.ColorHelper.getColorName;
 
+import com.example.home.camera.colorHelper.AnalogousAlgorithm;
+
+
 /**
  * Created by robertfernandes on 1/20/2017.
  */
@@ -36,9 +40,10 @@ public class ColorViewFragment extends Fragment {
 
     private TextToSpeech speech;
 
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //init(getActivity());
+        init(getActivity());
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +81,7 @@ public class ColorViewFragment extends Fragment {
         color2 = color;
         Log.println(Log.INFO, "TAG", "Color2 value " + String.format("#%06X", (0xFFFFFF & color2)));
 
+
         //correctionValues =  calculateCorrection(color);
 
         //color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
@@ -83,6 +89,15 @@ public class ColorViewFragment extends Fragment {
         Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
         //speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
+
+        if(new AnalogousAlgorithm().isMatch(color1,color2)){
+            speech.speak("Match", TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        }
+
+        else{
+            speech.speak("Not a Match", TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+
+        }
     }
 
     public int getColor1(){

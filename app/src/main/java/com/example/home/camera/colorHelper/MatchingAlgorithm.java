@@ -11,5 +11,5 @@ public interface MatchingAlgorithm {
 
     public List<Integer> getMatchingColors(int color);
 
-    public boolean isMatch(int color1, int color2);
+    boolean isMatch(int color1, int color2);
 }
