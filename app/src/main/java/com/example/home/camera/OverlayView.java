@@ -10,8 +10,8 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import static com.example.home.camera.ColorHelper.getClosestColor;
-import static com.example.home.camera.ColorHelper.getColorName;
+import static com.example.home.camera.colorHelper.ColorHelper.getClosestColor;
+import static com.example.home.camera.colorHelper.ColorHelper.getColorName;
 
 /**
  * Created by home on 30/10/2016.

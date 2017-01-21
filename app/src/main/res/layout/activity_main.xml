@@ -20,24 +20,12 @@
             android:layout_alignParentTop = "true"
             android:layout_weight="0.75"/>
 
-        <!--
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_weight="0.75"/>
-        -->
-
-        <com.example.home.camera.ColorView
+        <LinearLayout
             android:id="@+id/colorView"
             android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:layout_weight="0.25"/>
+            android:layout_weight="0.25"
+            android:orientation="horizontal" />
 
     </LinearLayout>
-
-
-
-
 </RelativeLayout>

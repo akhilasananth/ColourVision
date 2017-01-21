@@ -1,160 +1,28 @@
 package com.example.home.camera;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.SurfaceView;
-
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Random;
-
-import static com.example.home.camera.ColorHelper.*;
-
+import android.view.View;
 
 /**
- * Created by home on 31/10/2016.
+ * Created by robertfernandes on 1/20/2017.
  */
 
-public class ColorView extends SurfaceView {
-
-    private static final String Comp = "Comp Match";
-    private static final String Grey = "Grey Match";
-    private static final String Side = "Side Match";
-    private static final String Triad = "Triad Match";
-    private static final String Warm = "Warm Match";
-    private static final String Cool = "Cool Match";
-    private static final String Not = "Not a Match";
-
-    private static int WHITE = 0xFF;
-    private static double[] correctionValues =  {2.1794871794871797, 2.217391304347826, 2.056451612903226};
-    private int color1 = Color.BLACK;
-    private int color2 = Color.BLACK;
-    private Paint paint = new Paint();
-
-    private TextToSpeech speech;
-
+public class ColorView extends View {
     public ColorView(Context context) {
         super(context);
-        init(context);
     }
 
     public ColorView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
-    public ColorView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
+    public ColorView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
-    private void init(Context context) {
-        speech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-
-            }
-        });
-        speech.setLanguage(Locale.getDefault());
+    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 
-    public void setColor1(int color) {
-        color1 = color;
-        Log.println(Log.INFO, "TAG", "Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
-        correctionValues =  calculateCorrection(color);
-
-        color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
-
-        Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
-        speech.speak(getColorName(getClosestColor(color1)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        update();
-    }
-
-    public void setColor2(int color) {
-        color2 = color;
-        Log.println(Log.INFO, "TAG", "Color2 value " + String.format("#%06X", (0xFFFFFF & color2)));
-
-        correctionValues =  calculateCorrection(color);
-
-        color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
-
-        Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
-        speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        isMatchTTS();
-        update();
-    }
-
-    public int getColor1(){
-        return(color1);
-    }
-
-    public int getColor2(){
-        return(color2);
-    }
-
-    private void speak(String sp) {
-        speech.speak(sp, TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-    }
-
-    private void isMatchTTS(){
-        if(isComplementaryMatch(color1,color2)
-                || isGrayScaleMatch(color1,color2)
-                || isAnalogousMatch(color1,color2)
-                || isTriadMatch(color1,color2)
-                || isWarmMatch(color1,color2)
-                || isCoolMatch(color1,color2)){
-
-            //These if statements are just for testing
-
-            if(isComplementaryMatch(color1,color2)){
-                speak(Comp);
-            } else if(isGrayScaleMatch(color1,color2)){
-                speak(Grey);
-            } else if(isAnalogousMatch(color1,color2)){
-                speak(Side);
-            } else if(isTriadMatch(color1,color2)){
-                speak(Triad);
-            } else if(isWarmMatch(color1,color2)){
-                speak(Warm);
-            } else if(isCoolMatch(color1,color2)){
-                speak(Cool);
-            }
-        } else {
-            speak(Not);
-        }
-    }
-
-    public void update() {
-        Canvas canvas = getHolder().lockCanvas();
-
-        if (canvas != null) {
-            int width = canvas.getWidth();
-            int height = canvas.getHeight();
-
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(color1);
-
-            canvas.drawRect(0, 0, width / 2, height, paint);
-
-            paint.setColor(color2);
-            canvas.drawRect(width / 2, 0, width, height, paint);
-
-            getHolder().unlockCanvasAndPost(canvas);
-        }
-    }
-
-    public double[] calculateCorrection(int color){
-        double[] rgbCorrectionValues = new double[3];
-        rgbCorrectionValues[0] = 1+((Color.red(color)*1.0)/(WHITE-Color.red(color)));
-        rgbCorrectionValues[1] = 1+((Color.green(color)*1.0)/(WHITE-Color.green(color)));
-        rgbCorrectionValues[2] = 1+((Color.blue(color)*1.0)/(WHITE-Color.blue(color)));
-
-        return rgbCorrectionValues;
-    }
 }

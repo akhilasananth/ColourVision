@@ -2,7 +2,7 @@ package com.example.home.camera;
 
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -13,32 +13,34 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.home.camera.colorHelper.ColorHelper;
+
 public class MainActivity extends FragmentActivity {
     private static final String TAG = "AndroidCameraApi";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-
-    private ColorView colorView;
 
     private ColorHelper colorHelper;
 
     private int currentPage = 1;
 
+    private int color1 = Color.BLACK;
+    private int color2 = Color.BLACK;
+
     private ViewPager viewPager;
     private ScreenSlidePagerAdapter pagerAdapter;
+    private ColorViewFragment colorViewFragment;
 
-    private SQLiteDatabase database;
+    private DBHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         setContentView(R.layout.activity_main);
 
-        setupDatabase();
+        resetDatabase();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -72,9 +74,16 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        colorView = (ColorView) findViewById(R.id.colorView);
+        colorViewFragment = new ColorViewFragment();
+        getFragmentManager().beginTransaction().add(R.id.colorView, colorViewFragment).commit();
 
         colorHelper = new ColorHelper(this);
+    }
+
+    private void resetDatabase() {
+        dbHandler = new DBHandler(this);
+
+        dbHandler.onUpgrade(dbHandler.getWritableDatabase(), 0, 0);
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -85,24 +94,22 @@ public class MainActivity extends FragmentActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    colorView.setColor1(color);
+                    pagerAdapter.updateFragments();
+                    colorViewFragment.setColor1(color);
+                    dbHandler.insertItem(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    colorView.setColor2(color);
+                    pagerAdapter.updateFragments();
+                    colorViewFragment.setColor2(color);
+                    dbHandler.insertItem(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                 }
                 return true;
             default:
                 return super.dispatchKeyEvent(event);
         }
     }
-
-    public void setupDatabase() {
-        database = openOrCreateDatabase("database", MODE_PRIVATE, null);
-        database.execSQL("CREATE TABLE IF NOT EXISTS Item(Id INTEGER, color INTEGER)");
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
@@ -112,6 +119,14 @@ public class MainActivity extends FragmentActivity {
                 finish();
             }
         }
+    }
+
+    public int getColor1() {
+        return color1;
+    }
+
+    public int getColor2() {
+        return color2;
     }
 
     @Override
@@ -125,10 +140,4 @@ public class MainActivity extends FragmentActivity {
         Log.e(TAG, "onPause");
         super.onPause();
     }
-
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-
 }

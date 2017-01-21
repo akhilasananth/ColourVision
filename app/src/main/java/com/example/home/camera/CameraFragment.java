@@ -3,20 +3,20 @@ package com.example.home.camera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.v4.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import static com.example.home.camera.ColorHelper.getAverageColor;
+import static com.example.home.camera.colorHelper.ColorHelper.getAverageColor;
 
 /**
  * Created by robertfernandes on 1/17/2017.
  */
 
-public class CameraFragment extends Fragment {
+public class CameraFragment extends PageFragment {
 
     String TAG = "ASDF";
 
@@ -34,33 +34,29 @@ public class CameraFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.camera_preview, container, false);
-        overlayViewUpdateThread.start();
+
         cameraPreview = (CameraPreview) view.findViewById(R.id.cameraPreview);
         overlayView = (OverlayView) view.findViewById(R.id.overlayView);
+
+        overlayViewUpdateThread.start();
         startThreads();
 
         return view;
     }
 
-    private Thread overlayViewUpdateThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            long prevTime = System.currentTimeMillis();
-            running = true;
-            while (!quit) {
-                if (running) {
-                    long currTime = System.currentTimeMillis();
-                    if (currTime >= prevTime + 1000) {
-                        Log.i(TAG, "executing task");
-                        heavyWork(cameraPreview);
-                        prevTime = currTime;
-                    }
-                    overlayView.drawFrame();
-                }
+    public void update() {
+        AsyncTask<String, Void, String> operation = new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... strings) {
+                heavyWork();
+                return "Executed";
             }
-        }
-    });
+        };
+
+        operation.execute();
+    }
 
     public int getColor() {
         return color;
@@ -90,40 +86,49 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    public void heavyWork(CameraPreview cPrev) {
-        Bitmap bmp = cPrev.getBitmap();
+    private Thread overlayViewUpdateThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            long prevTime = System.currentTimeMillis();
+            running = true;
+            while (!quit) {
+                if (running) {
+                    long currTime = System.currentTimeMillis();
+                    if (currTime >= prevTime + 1000) {
+                        Log.i(TAG, "executing task");
+                        heavyWork();
+                        prevTime = currTime;
+                    }
+                }
+            }
+        }
+    });
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    private void heavyWork() {
+        Bitmap bmp = cameraPreview.getBitmap();
         if (bmp != null) {
             int searchRadius = 5;
             int searchDiameter = searchRadius * 2;
             int[] colors = new int[searchDiameter * searchDiameter];
-            int startX = cPrev.getWidth() / 2 - searchRadius;
-            int startY = cPrev.getHeight() / 2 - searchRadius;
+            int startX = cameraPreview.getWidth() / 2 - searchRadius;
+            int startY = cameraPreview.getHeight() / 2 - searchRadius;
 
             bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
 
             color = getAverageColor(colors);
 
             overlayView.setColor(color);
+            overlayView.drawFrame();
         }
-    }
-
-    public void onAttach(Context context) {
-        super.onAttach(context);
     }
 
     public void onDestroyView() {
         quit = true;
         killThreads();
         super.onDestroyView();
-    }
-
-    public void onDetach() {
-        killThreads();
-        super.onDetach();
-    }
-
-    public void onPause() {
-        super.onPause();
-        cameraPreview.closeCamera();
     }
 }
