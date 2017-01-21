@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.home.camera.colorHelper.ColorHelper.*;
+import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 
 /**
  * Created by robertfernandes on 1/20/2017.
@@ -15,15 +16,23 @@ public class ComplimentaryAlgorithm implements MatchingAlgorithm {
     public List<Integer> getMatchingColors(int color) {
         ArrayList<Integer> matchingColors = new ArrayList<>();
 
+        // convert to HSL
         double[] hslColor = RGBtoHSL(color);
-        double hue = hslColor[0];
 
-        hue += (hue <= 180)? 180 : -180;
+        // rotate across color wheel 180 degrees
+        hslColor[0] += 180/360.0;
 
-        double[] rgbColor = HSLtoRGB(new double[]{hue, hslColor[1], hslColor[2]});
-        int complimentaryColor = Color.rgb((int)rgbColor[0],(int)rgbColor[1],(int)rgbColor[2]);
+        if (hslColor[0] > 1.0)
+            hslColor[0] -= 1.0;
+        else if (hslColor[0] < 0)
+            hslColor[0] += 1.0;
 
-        matchingColors.add(complimentaryColor);
+        double[] temp = HSLtoRGB(hslColor);
+
+        int compliment = Color.rgb((int) temp[0], (int) temp[1], (int) temp[2]);
+
+        matchingColors.add(compliment);
+
         return matchingColors;
     }
 

@@ -35,7 +35,8 @@ public class Matcher {
     }
 
     public List<Integer> getMatchingColors(int color) {
-        MatchingAlgorithm ma = selectRandomStrategy();
+        MatchingAlgorithm ma = new ComplimentaryAlgorithm();
+
         return ma.getMatchingColors(color);
     }
 

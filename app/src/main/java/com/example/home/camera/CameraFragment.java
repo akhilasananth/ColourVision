@@ -47,15 +47,7 @@ public class CameraFragment extends PageFragment {
     }
 
     public void update() {
-        AsyncTask<String, Void, String> operation = new AsyncTask<String, Void, String>() {
-            @Override
-            protected String doInBackground(String... strings) {
-                heavyWork();
-                return "Executed";
-            }
-        };
 
-        operation.execute();
     }
 
     public int getColor() {

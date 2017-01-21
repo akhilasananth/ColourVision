@@ -26,6 +26,8 @@ public class ColorMatchFragment extends TableViewFragment {
 
     private int color = Color.BLACK;
 
+    private Matcher matcher = new Matcher();
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -36,7 +38,7 @@ public class ColorMatchFragment extends TableViewFragment {
 
     @Override
     public List<TableRow> createRows() {
-        Matcher matcher = new Matcher();
+
         List<Integer> matchingColors = matcher.getMatchingColors(color);
 
         List<TableRow> rows = new ArrayList<>();

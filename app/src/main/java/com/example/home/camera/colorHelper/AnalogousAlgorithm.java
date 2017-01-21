@@ -5,7 +5,9 @@ import android.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 import static com.example.home.camera.colorHelper.ColorHelper.*;
+
 
 /**
  * Created by robertfernandes on 1/20/2017.
@@ -18,14 +20,13 @@ public class AnalogousAlgorithm implements MatchingAlgorithm {
         double[] CIELABcolor = XYZtoCIELab(RGBtoXYZ(color));
         while(n > 0){
             if(n%2 == 0) {
-                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] +2.3*n) , (CIELABcolor[1] +2.3*n), (CIELABcolor[2] +2.3*n)}));
+                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] + 2.3 * n) , (CIELABcolor[1] +2.3 * n), (CIELABcolor[2] + 2.3 * n)}));
                 analogousColors.add(Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]));
             } else{
-                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] -2.3*n) , (CIELABcolor[1] -2.3*n), (CIELABcolor[2] -2.3*n)}));
+                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] - 2.3 * n) , (CIELABcolor[1] -2.3 * n), (CIELABcolor[2] -2.3 * n)}));
                 analogousColors.add(Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]));
             }
             n--;
-
         }
         return analogousColors;
     }

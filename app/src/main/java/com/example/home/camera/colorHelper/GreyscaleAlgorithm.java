@@ -2,7 +2,8 @@ package com.example.home.camera.colorHelper;
 
 import java.util.List;
 
-import static com.example.home.camera.colorHelper.ColorHelper.RGBtoHSL;
+import static com.example.home.camera.colorHelper.ColorHelper.*;
+import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 
 /**
  * Created by robertfernandes on 1/20/2017.
