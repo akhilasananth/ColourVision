@@ -46,17 +46,14 @@ public class Matcher {
         }
     }
 
-    public boolean checkMatch(int c1, int c2){
-        boolean isMatch = (
-                //new AnalogousAlgorithm().isMatch(c1,c2) ||
-                //new ComplimentaryAlgorithm().isMatch(c1, c2)||
-                new TriadAlgoritm().isMatch(c1, c2)
+    public boolean isMatch(int c1, int c2){
+        return  (new AnalogousAlgorithm().isMatch(c1,c2) ||
+                new ComplimentaryAlgorithm().isMatch(c1, c2)
+                //new TriadAlgoritm().isMatch(c1, c2) ||
                 //new WarmAlgorithm().isMatch(c1, c2) ||
                 //new CoolAlgorithm().isMatch(c1, c2) ||
                 //new GreyscaleAlgorithm().isMatch(c1, c2)
-                  );
-
-        return(isMatch);
+        );
     }
 
     public List<Integer> getMatchingColors(int color) {

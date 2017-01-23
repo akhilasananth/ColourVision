@@ -3,13 +3,13 @@ package com.example.home.camera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static com.example.home.camera.colorHelper.ColorHelper.calculateCorrection;
 import static com.example.home.camera.colorHelper.ColorHelper.getAverageColor;
 
 /**
@@ -39,12 +39,28 @@ public class CameraFragment extends PageFragment {
 
         cameraPreview = (CameraPreview) view.findViewById(R.id.cameraPreview);
         overlayView = (OverlayView) view.findViewById(R.id.overlayView);
-
-        overlayViewUpdateThread.start();
-        startThreads();
-
+        cameraPreview.turnOnFlashlight();
         return view;
     }
+
+    public void onStart() {
+        overlayViewUpdateThread.start();
+        startThreads();
+        super.onStart();
+    }
+
+    public void onResume() {
+        cameraPreview.turnOnFlashlight();
+        startThreads();
+        super.onResume();
+    }
+
+    public void onPause() {
+        pauseThreads();
+        cameraPreview.turnOffFlashlight();
+        super.onPause();
+    }
+
 
     public void update() {
 
@@ -110,6 +126,9 @@ public class CameraFragment extends PageFragment {
             int startY = cameraPreview.getHeight() / 2 - searchRadius;
 
             bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
+
+            //double[] temp = calculateCorrection(getAverageColor(colors));
+            //color = Color.rgb((int) temp[0], (int) temp[1], (int) temp[2]);
 
             color = getAverageColor(colors);
 

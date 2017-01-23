@@ -15,32 +15,36 @@ import static com.example.home.camera.colorHelper.ColorHelper.*;
  * Created by robertfernandes on 1/20/2017.
  */
 public class AnalogousAlgorithm implements MatchingAlgorithm {
-    private double visibleDifference = 2.3;
+
     @Override
     public List<Integer> getMatchingColors(int color) {
-        int n = 2;
-        ArrayList<Integer> analogousColors = new ArrayList<Integer>();
-        double[] CIELABcolor = XYZtoCIELab(RGBtoXYZ(color));
-        while(n > 0){
-            if(n%2 == 0) {
-                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] + 2.3 * n) , (CIELABcolor[1] +2.3 * n), (CIELABcolor[2] + 2.3 * n)}));
-                analogousColors.add(Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]));
-            } else{
-                double[] analogousColor = XYZtoRGB(CIELabToXYZ(new double[] {(CIELABcolor[0] - 2.3 * n) , (CIELABcolor[1] -2.3 * n), (CIELABcolor[2] -2.3 * n)}));
-                analogousColors.add(Color.rgb((int) analogousColor[0],(int) analogousColor[1],(int) analogousColor[2]));
-            }
-            n--;
-        }
+        ArrayList<Integer> analogousColors = new ArrayList<>();
+
+        double[] leftAnalogous = RGBtoHSL(color);
+        double[] rightAnalogous = RGBtoHSL(color);
+
+        leftAnalogous[0] += HUE_DIFFERENCE;
+        rightAnalogous[0] -= HUE_DIFFERENCE;
+
+        if (leftAnalogous[0] > 1) leftAnalogous[0] -= 1.0;
+        if (rightAnalogous[0] < 0) rightAnalogous[0] += 1.0;
+
+        double[] temp = HSLtoRGB(leftAnalogous);
+        analogousColors.add(Color.rgb((int) temp[0], (int) temp[1], (int)temp[2]));
+
+        temp = HSLtoRGB(rightAnalogous);
+        analogousColors.add(Color.rgb((int) temp[0], (int) temp[1], (int)temp[2]));
+
         return analogousColors;
     }
 
     @Override
     public boolean isMatch(int color1, int color2) {
-        double deltaE = getDeltaE(XYZtoCIELab(RGBtoXYZ(color1)),XYZtoCIELab(RGBtoXYZ(color2)));
-        if(deltaE>=visibleDifference && deltaE<=visibleDifference*13.5) {
-            Log.d("ANALOGOUS", "isMatch: Analogous Match");
-            return true;
-        }
-        return false;
+        double[] c1 = RGBtoHSL(color1);
+        double[] c2 = RGBtoHSL(color2);
+
+        double hueDifference = Math.abs(c1[0] - c2[0]);
+
+        return hueDifference <= HUE_DIFFERENCE;
     }
 }

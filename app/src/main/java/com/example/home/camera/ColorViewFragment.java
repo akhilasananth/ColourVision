@@ -19,8 +19,7 @@ import android.view.ViewGroup;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static com.example.home.camera.colorHelper.ColorHelper.getClosestColor;
-import static com.example.home.camera.colorHelper.ColorHelper.getColorName;
+import static com.example.home.camera.colorHelper.ColorHelper.*;
 
 import com.example.home.camera.colorHelper.Matcher;
 
@@ -31,7 +30,6 @@ import com.example.home.camera.colorHelper.Matcher;
 
 public class ColorViewFragment extends Fragment {
 
-    private static double[] correctionValues =  {2.1794871794871797, 2.217391304347826, 2.056451612903226};
     private int color1 = Color.BLACK;
     private int color2 = Color.BLACK;
 
@@ -39,6 +37,8 @@ public class ColorViewFragment extends Fragment {
     private SurfaceView colorView2;
 
     private TextToSpeech speech;
+    private double[] correctionValues;
+
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -63,34 +63,34 @@ public class ColorViewFragment extends Fragment {
             }
         });
         speech.setLanguage(Locale.getDefault());
+
     }
 
     public void setColor1(int color) {
         color1 = color;
         Log.println(Log.INFO, "TAG", "Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
-        //correctionValues =  calculateCorrection(color);
 
-        //color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
+        correctionValues =  calculateCorrection(color);
+        color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
 
-        Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
-        //speech.speak(getColorName(getClosestColor(color1)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        speech.speak(getColorName(getClosestColor(color1)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
     }
 
     public void setColor2(int color) {
         color2 = color;
+
         Log.println(Log.INFO, "TAG", "Color2 value " + String.format("#%06X", (0xFFFFFF & color2)));
 
+        correctionValues = calculateCorrection(color);
 
-        //correctionValues =  calculateCorrection(color);
-
-        //color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
+        color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
 
         Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
-        //speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+        speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
 
-        if(new Matcher().checkMatch(color1,color2)){
+        if(new Matcher().isMatch(color1,color2)){
             speech.speak("Match", TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
 

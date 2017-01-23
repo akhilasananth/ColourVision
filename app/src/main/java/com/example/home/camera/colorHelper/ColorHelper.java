@@ -18,7 +18,13 @@ import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 
 public class ColorHelper {
 
-    private static int WHITE = 0xFF;
+    public static final double JUST_NOTICEABLE_DIFFERENCE = 2.3; // in CIEL*a*b* space
+
+    public static final double HUE_DIFFERENCE = 1.0 / 12.0;
+
+    public static final double COMPLIMENT_SHIFT = HUE_DIFFERENCE * 6;
+
+    public static final int WHITE = 0xFF;
 
     private Context context;
 

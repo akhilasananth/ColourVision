@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface MatchingAlgorithm {
 
-    public List<Integer> getMatchingColors(int color);
+    List<Integer> getMatchingColors(int color);
 
     boolean isMatch(int color1, int color2);
 }

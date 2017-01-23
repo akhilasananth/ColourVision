@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,9 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
     private static final int NUM_PAGES = 3;
 
-    private static final int COLORMATCH = 0;
-    private static final int CAMERAPREVIEW = 1;
-    private static final int ITEMVIEW = 2;
+    public static final int COLORMATCH = 0;
+    public static final int CAMERAPREVIEW = 1;
+    public static final int ITEMVIEW = 2;
 
     private CameraFragment cameraFragment;
     private ColorMatchFragment colorMatchFragment;
@@ -36,6 +37,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         fragmentList.add(cameraFragment);
         fragmentList.add(colorMatchFragment);
         fragmentList.add(itemFragment);
+
     }
 
     @Override
@@ -52,12 +54,13 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         }
     }
 
-    public void updateFragments() {
-        for (PageFragment fragment : fragmentList) {
-            if (fragment.isVisible())
-                fragment.update();
-        }
+    public void updateFragments(int currentPage) {
 
+        PageFragment f = fragmentList.get(currentPage);
+
+        if (f.isVisible()) f.update();
+
+        Log.i("currentPage", "" + currentPage);
     }
 
     public int getColor() {

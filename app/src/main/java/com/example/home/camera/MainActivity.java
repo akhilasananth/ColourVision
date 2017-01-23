@@ -21,7 +21,9 @@ public class MainActivity extends FragmentActivity {
 
     private ColorHelper colorHelper;
 
-    private int currentPage = 1;
+    private static final int FIRST_PAGE = 1;
+
+    private int currentPage = FIRST_PAGE;
 
     private int color1 = Color.BLACK;
     private int color2 = Color.BLACK;
@@ -47,31 +49,17 @@ public class MainActivity extends FragmentActivity {
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(currentPage);
 
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.container);
-        linearLayout.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-            @Override
-            public void onSwipeRight() {
-                if (currentPage != 0)
-                    currentPage--;
-                viewPager.setCurrentItem(currentPage);
-            }
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
 
             @Override
-            public void onSwipeLeft() {
-                if (currentPage != pagerAdapter.getCount() - 1)
-                    currentPage++;
-                viewPager.setCurrentItem(currentPage);
+            public void onPageSelected(int position) {
+
+                pagerAdapter.getItem(currentPage).onPause();
+                pagerAdapter.getItem(position).onResume();
+                pagerAdapter.updateFragments(position);
+                currentPage = position;
             }
 
-            @Override
-            public void onSwipeTop() {
-
-            }
-
-            @Override
-            public void onSwipeBottom() {
-
-            }
         });
 
         colorViewFragment = new ColorViewFragment();
@@ -94,14 +82,14 @@ public class MainActivity extends FragmentActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    pagerAdapter.updateFragments();
+                    pagerAdapter.updateFragments(currentPage);
                     colorViewFragment.setColor1(color);
                     dbHandler.insertItem(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    pagerAdapter.updateFragments();
+                    pagerAdapter.updateFragments(currentPage);
                     colorViewFragment.setColor2(color);
                     dbHandler.insertItem(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                 }

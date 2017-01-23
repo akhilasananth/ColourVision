@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -43,6 +44,8 @@ public class CameraPreview extends TextureView {
 
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
+
+    private boolean enableFlash = false;
 
     public CameraPreview(Context context) {
         super(context);
@@ -190,6 +193,24 @@ public class CameraPreview extends TextureView {
             cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void turnOnFlashlight() {
+        try {
+            captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
+            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void turnOffFlashlight() {
+        try {
+            captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
+            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
+        } catch (Exception e) {
+
         }
     }
 

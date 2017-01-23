@@ -91,7 +91,7 @@ public class ColorSpaceConversion {
         return (new double[]{R,G,B});
     }
 
-    protected static double[] RGBtoHSL(int color){
+    public static double[] RGBtoHSL(int color){
         double H = 0;
         double S = 0;
         double L = 0;
@@ -140,7 +140,7 @@ public class ColorSpaceConversion {
         return (new double[]{H,S,L});
     }
 
-    protected static double[] HSLtoRGB(double[] hslColor){
+    public static double[] HSLtoRGB(double[] hslColor){
         double h = hslColor[0];
         double s = hslColor[1];
         double l = hslColor[2];
@@ -168,11 +168,9 @@ public class ColorSpaceConversion {
 
         p = 2 * l - q;
 
-        r = (int)(255*Math.max(0, Hue_2_RGB(p, q, h + (1.0 / 3.0))));
-        r = ((int)r<<16);
-        g = (int)(255*Math.max(0, Hue_2_RGB(p, q, h)));
-        g = ((int)g<<8);
-        b = (int)(255*Math.max(0, Hue_2_RGB(p, q, h - (1.0 / 3.0))));
+        r = 255 * Hue_2_RGB(p, q, h + (1.0 / 3.0));
+        g = 255 * Hue_2_RGB(p, q, h);
+        b = 255 * Hue_2_RGB(p, q, h - (1.0 / 3.0));
 
         return(new double[]{r,g,b});
     }

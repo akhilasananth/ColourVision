@@ -20,18 +20,11 @@ public class ComplimentaryAlgorithm implements MatchingAlgorithm {
         // convert to HSL
         double[] hslColor = RGBtoHSL(color);
 
+        hslColor[0] += COMPLIMENT_SHIFT;
+        if (hslColor[0] > 1) hslColor[0] -= 1.0;
 
-        //Generate complementary colors
-        for(double i = 0.5; i<=0.65; i++) {
-            if((hslColor[0] + i)<1) {
-                double[] tempColor = HSLtoRGB(new double[]{hslColor[0] + i, hslColor[1], hslColor[2]});
-                matchingColors.add(Color.rgb((int) tempColor[0], (int) tempColor[1], (int) tempColor[2]));
-            }
-            else{
-                double[] tempColor = HSLtoRGB(new double[]{hslColor[0] - i, hslColor[1], hslColor[2]});
-                matchingColors.add(Color.rgb((int) tempColor[0], (int) tempColor[1], (int) tempColor[2]));
-            }
-        }
+        double[] temp = HSLtoRGB(hslColor);
+        matchingColors.add(Color.rgb((int) temp[0], (int) temp[1], (int) temp[2]));
 
         return matchingColors;
     }
@@ -42,7 +35,8 @@ public class ComplimentaryAlgorithm implements MatchingAlgorithm {
         double[] c2 = RGBtoHSL(color2);
         double hueDifference = Math.abs(c1[0]-c2[0]);
         Log.d("HUE_DIFERENCE", "isMatch: Hue difference: " + hueDifference);
-        if(hueDifference>0.5 && hueDifference<0.65) {
+
+        if(hueDifference < COMPLIMENT_SHIFT + HUE_DIFFERENCE / 2 && hueDifference > COMPLIMENT_SHIFT - HUE_DIFFERENCE / 2) {
             Log.d("COMPLIMENTARY", "isMatch: Complimentary Match");
             return true;
         }
