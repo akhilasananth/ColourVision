@@ -22,7 +22,7 @@ import java.util.Locale;
 import static com.example.home.camera.colorHelper.ColorHelper.getClosestColor;
 import static com.example.home.camera.colorHelper.ColorHelper.getColorName;
 
-import com.example.home.camera.colorHelper.AnalogousAlgorithm;
+import com.example.home.camera.colorHelper.Matcher;
 
 
 /**
@@ -90,7 +90,7 @@ public class ColorViewFragment extends Fragment {
         //speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
 
-        if(new AnalogousAlgorithm().isMatch(color1,color2)){
+        if(new Matcher().checkMatch(color1,color2)){
             speech.speak("Match", TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }
 

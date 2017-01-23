@@ -1,5 +1,7 @@
 package com.example.home.camera.colorHelper;
 
+import android.util.Log;
+
 import java.util.List;
 
 import static com.example.home.camera.colorHelper.ColorHelper.*;
@@ -20,16 +22,24 @@ public class GreyscaleAlgorithm implements MatchingAlgorithm {
         double[] c2 = RGBtoHSL(color2);
         boolean c1IslowSaturation = c1[2] <=10;
         boolean c2IslowSaturation = c2[2] <=10;
+        boolean misMatch = false;
 
         if((c1[1] <= 0.1 && c1IslowSaturation) && c2[1] >= 0.1 ){
-            return true;
+            misMatch = true;
         } else if(c1[1] >= 0.1 && (c2[1] <= 0.1 && c2IslowSaturation)){
-            return true;
+            misMatch = true;
         } else if((c1[1] <= 0.1 && c2[1] <= 0.1 )&& (c1IslowSaturation && c2IslowSaturation) && color1 != color2){
-            return true;
+            misMatch = true;
         }
-        return false;
+
+        if(misMatch) {
+            Log.d("GREYSCALE", "isMatch: Greyscale Match");
+        }
+
+        return misMatch;
     }
+
+
 }
 
 

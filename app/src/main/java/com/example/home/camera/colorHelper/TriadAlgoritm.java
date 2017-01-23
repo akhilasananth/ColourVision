@@ -1,6 +1,7 @@
 package com.example.home.camera.colorHelper;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,15 @@ public class TriadAlgoritm implements MatchingAlgorithm {
 
     @Override
     public boolean isMatch(int color1, int color2) {
-        return(getMatchingColors(color1).contains(color2)) && (color1 != color2);
+        double[] c1 = RGBtoHSL(color1);
+        double[] c2 = RGBtoHSL(color2);
+        double hueDifference = Math.abs(c1[0]-c2[0]);
+        Log.d("HUE_DIFERENCE", "isMatch: Hue difference: " + hueDifference);
+        if((hueDifference>0.20 && hueDifference<0.4)||(hueDifference>0.45 && hueDifference<0.85)) {
+            Log.d("TRIAD", "isMatch: Triad Match");
+            return true;
+        }
+        return false;
+
     }
 }

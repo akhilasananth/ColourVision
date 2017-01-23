@@ -1,6 +1,8 @@
 package com.example.home.camera.colorHelper;
 
 import android.graphics.Color;
+import android.util.Log;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,8 @@ public class AnalogousAlgorithm implements MatchingAlgorithm {
     @Override
     public boolean isMatch(int color1, int color2) {
         double deltaE = getDeltaE(XYZtoCIELab(RGBtoXYZ(color1)),XYZtoCIELab(RGBtoXYZ(color2)));
-        if(deltaE>=visibleDifference && deltaE<=visibleDifference*4) {
+        if(deltaE>=visibleDifference && deltaE<=visibleDifference*13.5) {
+            Log.d("ANALOGOUS", "isMatch: Analogous Match");
             return true;
         }
         return false;

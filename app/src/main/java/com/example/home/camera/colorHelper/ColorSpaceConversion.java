@@ -1,6 +1,7 @@
 package com.example.home.camera.colorHelper;
 
 import android.graphics.Color;
+import android.util.Log;
 
 /**
  * Created by robertfernandes on 1/20/2017.
@@ -95,48 +96,47 @@ public class ColorSpaceConversion {
         double S = 0;
         double L = 0;
 
-        double r1 = Color.red(color)/255.0;
-        double g1 = Color.green(color)/255.0;
-        double b1 = Color.blue(color)/255.0;
+        double r = Color.red(color)/255.0;
+        double g = Color.green(color)/255.0;
+        double b = Color.blue(color)/255.0;
 
-        double min = Math.min(r1, Math.min(g1, b1));
-        double max = Math.max(r1, Math.max(g1, b1));
+        double min = Math.min(r, Math.min(g, b));
+        double max = Math.max(r, Math.max(g, b));
 
         double delta_r1 = 0;
         double delta_g1 = 0;
         double delta_b1 = 0;
-        double delta_max = max - min;
+        double delta = max - min;
 
+        //Calculate Luminance
         L = (max + min)/2.0;
 
-        if(delta_max == 0){
-            H = 0;
+        //Calculate Saturation
+        if(max == min){
             S = 0;
-        } else {
-            if(L < 0.5){
-                S = delta_max/(max + min);
-            }
-            else{
-                S = delta_max/(2-max - min);
-            }
-            delta_r1 = (((max-r1)/6.0) + (delta_max/2.0))/delta_max;
-            delta_g1 = (((max-r1)/6.0) + (delta_max/2.0))/delta_max;
-            delta_b1 = (((max-r1)/6.0) + (delta_max/2.0))/delta_max;
-
-            if(r1 == max){
-                H = delta_b1 - delta_g1;
-            } else if(g1 == max){
-                H = (1/3.0)+(delta_r1 - delta_b1);
-            } else if(b1 == max){
-                H = (2/3.0)+(delta_g1 - delta_r1);
-            }
-
-            if(H < 0){
-                H += 1;
-            } else if (H > 1){
-                H -= 1;
-            }
         }
+        else if(L < 0.5){
+            S = delta/(max + min);
+        }
+        else{
+            S = delta/(2-delta);
+            }
+
+        //Calculate Hue
+        if(max == min){
+            H = 0;
+        }
+        else if(max==r){
+            H = (( (g - b) / (max - min) / 6.0) + 1) % 1;
+        }
+        else if(max==g){
+            H = ( (b - r) / (max - min) / 6.0) + 1.0/3.0;
+        }
+        else if(b == max){
+            H = ( (r - g) / (max - min) / 6.0) + 2.0/3.0;
+        }
+
+        Log.d("HUE", "RGBtoHSL: "+H);
         return (new double[]{H,S,L});
     }
 
@@ -149,26 +149,30 @@ public class ColorSpaceConversion {
         double g = 0;
         double b = 0;
 
-        double v1 = 0;
-        double v2 = 0;
+        double p = 0;
+        double q = 0;
 
-        if(s == 0){
-            r =g=b=l;
+        //Outside Range exceptions
+        if((s<0.0 || s>1.0)|| (l<0.0 || l>1.0)) {
+            String message = "Color parameter outside of expected range - Saturation: " +s;
+            throw new IllegalArgumentException( message );
+        }
+
+        //Conversion
+        if(l<0.5){
+            q = l*(1 + s);
         }
         else{
-            if(l < 0.5){
-                v2 = l * ( 1 + s );
-            }
-            else{
-                v2 =  (l + s ) - ( s * l) ;
-                v1 = 2 * l - v2;
-            }
-
-            r = 255 * Hue_2_RGB( v1, v2, h + ( 1 / 3.0 ) );
-            g = 255 * Hue_2_RGB( v1, v2, h );
-            b = 255 * Hue_2_RGB( v1, v2, h - ( 1 / 3.0 ) );
-
+            q = (l + s) - (s * l);
         }
+
+        p = 2 * l - q;
+
+        r = (int)(255*Math.max(0, Hue_2_RGB(p, q, h + (1.0 / 3.0))));
+        r = ((int)r<<16);
+        g = (int)(255*Math.max(0, Hue_2_RGB(p, q, h)));
+        g = ((int)g<<8);
+        b = (int)(255*Math.max(0, Hue_2_RGB(p, q, h - (1.0 / 3.0))));
 
         return(new double[]{r,g,b});
     }
@@ -176,9 +180,13 @@ public class ColorSpaceConversion {
     protected static double Hue_2_RGB( double p, double q, double t ) {
         if (t < 0) t += 1;
         if (t > 1) t -= 1;
-        if (t < 1 / 6.0) return p + (q - p) * 6 * t;
-        if (t < 1 / 2.0) return q;
-        if (t < 2 / 3.0) return p + (q - p) * (2 / 3.0 - t) * 6.0;
+        if (6 * t < 1){
+            return p + ((q - p) * 6 * t);
+        }
+        if (2 * t < 1) return q;
+        if (3 * t < 2){
+            return p + ((q - p) * 6 * ((2.0/3.0) - t));
+        }
         return p;
     }
 }
