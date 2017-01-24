@@ -24,6 +24,8 @@ public class ColorHelper {
 
     public static final double COMPLIMENT_SHIFT = HUE_DIFFERENCE * 6;
 
+    public static final double TRIAD_SHIFT = HUE_DIFFERENCE * 5;
+
     public static final int WHITE = 0xFF;
 
     private Context context;

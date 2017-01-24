@@ -36,7 +36,7 @@ public class ComplimentaryAlgorithm implements MatchingAlgorithm {
         double hueDifference = Math.abs(c1[0]-c2[0]);
         Log.d("HUE_DIFERENCE", "isMatch: Hue difference: " + hueDifference);
 
-        if(hueDifference < COMPLIMENT_SHIFT + HUE_DIFFERENCE / 2 && hueDifference > COMPLIMENT_SHIFT - HUE_DIFFERENCE / 2) {
+        if((hueDifference < (COMPLIMENT_SHIFT + HUE_DIFFERENCE/2)) && (hueDifference > (COMPLIMENT_SHIFT - HUE_DIFFERENCE/2)) ){
             Log.d("COMPLIMENTARY", "isMatch: Complimentary Match");
             return true;
         }

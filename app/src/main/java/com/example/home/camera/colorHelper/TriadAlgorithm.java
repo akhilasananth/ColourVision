@@ -13,22 +13,24 @@ import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 /**
  * Created by robertfernandes on 1/20/2017.
  */
-public class TriadAlgoritm implements MatchingAlgorithm {
+public class TriadAlgorithm implements MatchingAlgorithm {
 
     @Override
     public List<Integer> getMatchingColors(int color) {
         ArrayList<Integer> matchingColors = new ArrayList<>();
 
         double[] hslColor = RGBtoHSL(color);
-        double[] rgbColor1 = HSLtoRGB(new double[]{hslColor[0] + 120, hslColor[1], hslColor[2]});
-        double[] rgbColor2 = HSLtoRGB(new double[]{hslColor[0] - 120, hslColor[1], hslColor[2]});
+        if (hslColor[0] > 1) hslColor[0] -= 1.0;
 
-        int color1 = Color.rgb((int)rgbColor1[0], (int)rgbColor1[1], (int)rgbColor1[2]);
-        int color2 = Color.rgb((int)rgbColor2[0], (int)rgbColor2[1], (int)rgbColor2[2]);
+        hslColor[0] += TRIAD_SHIFT;
+        double[] temp = HSLtoRGB(hslColor);
+        matchingColors.add(Color.rgb((int) temp[0], (int) temp[1], (int) temp[2]));
 
-        matchingColors.add(color1);
-        matchingColors.add(color2);
+        hslColor[0] -= TRIAD_SHIFT;
+        temp = HSLtoRGB(hslColor);
+        matchingColors.add(Color.rgb((int) temp[0], (int) temp[1], (int) temp[2]));
 
+        Log.d("TRIAD_COLORS", "getMatchingColors: Number of colors in the list" + matchingColors.size());
         return matchingColors;
     }
 
@@ -38,7 +40,9 @@ public class TriadAlgoritm implements MatchingAlgorithm {
         double[] c2 = RGBtoHSL(color2);
         double hueDifference = Math.abs(c1[0]-c2[0]);
         Log.d("HUE_DIFERENCE", "isMatch: Hue difference: " + hueDifference);
-        if((hueDifference>0.20 && hueDifference<0.4)||(hueDifference>0.45 && hueDifference<0.85)) {
+        ComplimentaryAlgorithm complimentary_Color = new ComplimentaryAlgorithm();
+        if(((hueDifference < (TRIAD_SHIFT + HUE_DIFFERENCE) )&& (hueDifference > (TRIAD_SHIFT - HUE_DIFFERENCE))) && (!complimentary_Color.isMatch(color1, color2)))
+        {
             Log.d("TRIAD", "isMatch: Triad Match");
             return true;
         }

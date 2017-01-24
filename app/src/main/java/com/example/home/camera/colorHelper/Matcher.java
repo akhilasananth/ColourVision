@@ -1,6 +1,5 @@
 package com.example.home.camera.colorHelper;
 
-import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 
 import java.util.*;
@@ -34,7 +33,7 @@ public class Matcher {
             case Analogous:
                 return new AnalogousAlgorithm();
             case Triad:
-                return new TriadAlgoritm();
+                return new TriadAlgorithm();
             case Warm:
                 return new WarmAlgorithm();
             case Cool:
@@ -47,9 +46,9 @@ public class Matcher {
     }
 
     public boolean isMatch(int c1, int c2){
-        return  (new AnalogousAlgorithm().isMatch(c1,c2) ||
-                new ComplimentaryAlgorithm().isMatch(c1, c2)
-                //new TriadAlgoritm().isMatch(c1, c2) ||
+        return  (//new AnalogousAlgorithm().isMatch(c1,c2) ||
+                //new ComplimentaryAlgorithm().isMatch(c1, c2)
+                new TriadAlgorithm().isMatch(c1, c2) //||
                 //new WarmAlgorithm().isMatch(c1, c2) ||
                 //new CoolAlgorithm().isMatch(c1, c2) ||
                 //new GreyscaleAlgorithm().isMatch(c1, c2)
