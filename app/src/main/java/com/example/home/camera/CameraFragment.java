@@ -39,7 +39,7 @@ public class CameraFragment extends PageFragment {
 
         cameraPreview = (CameraPreview) view.findViewById(R.id.cameraPreview);
         overlayView = (OverlayView) view.findViewById(R.id.overlayView);
-       // cameraPreview.turnOnFlashlight();
+        cameraPreview.turnOnFlashlight();
         return view;
     }
 
@@ -50,7 +50,7 @@ public class CameraFragment extends PageFragment {
     }
 
     public void onResume() {
-       // cameraPreview.turnOnFlashlight();
+        cameraPreview.turnOnFlashlight();
         startThreads();
         super.onResume();
     }

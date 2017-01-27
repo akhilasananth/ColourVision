@@ -36,7 +36,7 @@ public class ColorViewFragment extends Fragment {
     private SurfaceView colorView1;
     private SurfaceView colorView2;
 
-    private TextToSpeech speech;
+
    // private double[] correctionValues;
 
 
@@ -56,13 +56,7 @@ public class ColorViewFragment extends Fragment {
     }
 
     private void init(Context context) {
-        speech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
 
-            }
-        });
-        speech.setLanguage(Locale.getDefault());
 
     }
 
@@ -72,8 +66,6 @@ public class ColorViewFragment extends Fragment {
 
       //  correctionValues =  calculateCorrection(color);
         //color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
-
-        speech.speak(getColorName(getClosestColor(color1)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
     }
 
@@ -87,17 +79,7 @@ public class ColorViewFragment extends Fragment {
         //color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
 
         //Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
-        speech.speak(getColorName(getClosestColor(color2)), TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         update();
-
-        if(new Matcher().isMatch(color1,color2)){
-            speech.speak("Match", TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-        }
-
-        else{
-            speech.speak("Not a Match", TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
-
-        }
     }
 
     public int getColor1(){
@@ -106,10 +88,6 @@ public class ColorViewFragment extends Fragment {
 
     public int getColor2(){
         return(color2);
-    }
-
-    private void speak(String sp) {
-        speech.speak(sp, TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
     }
 
     public void update() {

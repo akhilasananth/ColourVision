@@ -62,6 +62,9 @@ public class ColorHelper {
                 currentDistance = tempDistance;
                 closestColor = currentColor;
             }
+            if (currentDistance <= 2.3*2) {
+                return closestColor;
+            }
         }
 
         return closestColor;

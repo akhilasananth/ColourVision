@@ -64,4 +64,9 @@ public class ColorMatchFragment extends TableViewFragment {
         }
         return rows;
     }
+
+    public void setMatcher(Matcher matcher) {
+        this.matcher = matcher;
+        update();
+    }
 }

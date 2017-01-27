@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
+import com.example.home.camera.colorHelper.Matcher;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,28 +17,29 @@ import java.util.List;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final int NUM_PAGES = 3;
+    private static final int NUM_PAGES = 2;
 
     public static final int COLORMATCH = 0;
     public static final int CAMERAPREVIEW = 1;
-    public static final int ITEMVIEW = 2;
+    //public static final int ITEMVIEW = 2;
 
     private CameraFragment cameraFragment;
     private ColorMatchFragment colorMatchFragment;
-    private ItemFragment itemFragment;
+    //private ItemFragment itemFragment;
 
     private List<PageFragment> fragmentList;
+    private Matcher matcher = new Matcher();
 
     public ScreenSlidePagerAdapter(FragmentManager fm) {
         super(fm);
         fragmentList = new ArrayList<>();
         cameraFragment = new CameraFragment();
         colorMatchFragment = new ColorMatchFragment();
-        itemFragment = new ItemFragment();
+        //itemFragment = new ItemFragment();
 
         fragmentList.add(cameraFragment);
         fragmentList.add(colorMatchFragment);
-        fragmentList.add(itemFragment);
+        //fragmentList.add(itemFragment);
 
     }
 
@@ -47,8 +50,8 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
                 return colorMatchFragment;
             case CAMERAPREVIEW:
                 return cameraFragment;
-            case ITEMVIEW:
-                return itemFragment;
+            //case ITEMVIEW:
+            //    return itemFragment;
             default:
                 return null;
         }
@@ -59,8 +62,17 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         PageFragment f = fragmentList.get(currentPage);
 
         if (f.isVisible()) f.update();
+        if (currentPage == COLORMATCH) {
+            colorMatchFragment.setMatcher(matcher);
+        } else if (currentPage == CAMERAPREVIEW) {
+
+        }
 
         Log.i("currentPage", "" + currentPage);
+    }
+
+    public void setMatcher(Matcher matcher) {
+        this.matcher = matcher;
     }
 
     public int getColor() {

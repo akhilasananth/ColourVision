@@ -13,7 +13,7 @@ public class Matcher {
     private TextToSpeech speech;
 
     enum MatchType {
-        Complimentary, Analogous, Warm, Cool, Greyscale, Triad
+        Complimentary, Analogous, //Warm, Cool, Greyscale, Triad
     }
 
     public MatchingAlgorithm selectStrategy() {
@@ -32,7 +32,7 @@ public class Matcher {
                 return new ComplimentaryAlgorithm();
             case Analogous:
                 return new AnalogousAlgorithm();
-            case Triad:
+            /*case Triad:
                 return new TriadAlgorithm();
             case Warm:
                 return new WarmAlgorithm();
@@ -40,15 +40,16 @@ public class Matcher {
                 return new CoolAlgorithm();
             case Greyscale:
                 return new GreyscaleAlgorithm();
+                */
             default:
                 return null;
         }
     }
 
     public boolean isMatch(int c1, int c2){
-        return  (//new AnalogousAlgorithm().isMatch(c1,c2) ||
-                //new ComplimentaryAlgorithm().isMatch(c1, c2)
-                new TriadAlgorithm().isMatch(c1, c2) //||
+        return  (new AnalogousAlgorithm().isMatch(c1,c2) ||
+                new ComplimentaryAlgorithm().isMatch(c1, c2)
+                //new TriadAlgorithm().isMatch(c1, c2) //||
                 //new WarmAlgorithm().isMatch(c1, c2) ||
                 //new CoolAlgorithm().isMatch(c1, c2) ||
                 //new GreyscaleAlgorithm().isMatch(c1, c2)
@@ -57,7 +58,6 @@ public class Matcher {
 
     public List<Integer> getMatchingColors(int color) {
         MatchingAlgorithm ma = new ComplimentaryAlgorithm();
-
         return ma.getMatchingColors(color);
     }
 

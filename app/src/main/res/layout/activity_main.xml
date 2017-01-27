@@ -20,12 +20,26 @@
             android:layout_alignParentTop = "true"
             android:layout_weight="0.75"/>
 
-        <LinearLayout
-            android:id="@+id/colorView"
-            android:layout_height="0dp"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_weight="0.25"
-            android:orientation="horizontal" />
+            android:layout_height="0dp"
+            android:layout_weight="0.25">
+
+            <LinearLayout
+                android:id="@+id/colorView"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:orientation="horizontal" />
+
+            <SurfaceView
+                android:id="@+id/actionListener"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:background="@android:color/transparent"/>
+
+        </FrameLayout>
+
 
     </LinearLayout>
 </RelativeLayout>
