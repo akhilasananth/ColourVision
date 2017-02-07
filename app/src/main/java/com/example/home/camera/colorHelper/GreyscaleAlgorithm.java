@@ -32,10 +32,6 @@ public class GreyscaleAlgorithm implements MatchingAlgorithm {
             misMatch = true;
         }
 
-        if(misMatch) {
-            Log.d("GREYSCALE", "isMatch: Greyscale Match");
-        }
-
         return misMatch;
     }
 
