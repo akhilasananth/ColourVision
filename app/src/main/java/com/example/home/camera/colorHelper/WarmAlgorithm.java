@@ -15,6 +15,7 @@ public class WarmAlgorithm implements MatchingAlgorithm {
         return null;
     }
 
+
     @Override
     public boolean isMatch(int color1, int color2) {
         boolean misMatch = inWarmRange(color1) && inWarmRange(color2);

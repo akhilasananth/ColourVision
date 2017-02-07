@@ -47,10 +47,10 @@ public class Matcher {
     }
 
     public boolean isMatch(int c1, int c2){
-        return  (new AnalogousAlgorithm().isMatch(c1,c2) ||
-                new ComplimentaryAlgorithm().isMatch(c1, c2)
-                //new TriadAlgorithm().isMatch(c1, c2) //||
-                //new WarmAlgorithm().isMatch(c1, c2) ||
+        return  (//new AnalogousAlgorithm().isMatch(c1,c2) ||
+                //new ComplimentaryAlgorithm().isMatch(c1, c2)
+                new TriadAlgorithm().isMatch(c1, c2) //||
+                //new WarmAlgorithm().isMatch(c1, c2) //||
                 //new CoolAlgorithm().isMatch(c1, c2) ||
                 //new GreyscaleAlgorithm().isMatch(c1, c2)
         );

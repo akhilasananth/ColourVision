@@ -39,14 +39,7 @@ public class TriadAlgorithm implements MatchingAlgorithm {
         double[] c1 = RGBtoHSL(color1);
         double[] c2 = RGBtoHSL(color2);
         double hueDifference = Math.abs(c1[0]-c2[0]);
-        Log.d("HUE_DIFERENCE", "isMatch: Hue difference: " + hueDifference);
-        ComplimentaryAlgorithm complimentary_Color = new ComplimentaryAlgorithm();
-        if(((hueDifference < (TRIAD_SHIFT + HUE_DIFFERENCE) )&& (hueDifference > (TRIAD_SHIFT - HUE_DIFFERENCE))) && (!complimentary_Color.isMatch(color1, color2)))
-        {
-            Log.d("TRIAD", "isMatch: Triad Match");
-            return true;
-        }
-        return false;
+        return ((hueDifference >= (TRIAD_SHIFT - HUE_DIFFERENCE)) && (hueDifference <= (TRIAD_SHIFT + HUE_DIFFERENCE))) ;
 
     }
 }
