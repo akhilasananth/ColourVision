@@ -37,7 +37,7 @@ public class ColorViewFragment extends Fragment {
     private SurfaceView colorView2;
 
 
-   // private double[] correctionValues;
+   private double[] correctionValues;
 
 
 
@@ -62,10 +62,14 @@ public class ColorViewFragment extends Fragment {
 
     public void setColor1(int color) {
         color1 = color;
-        Log.println(Log.INFO, "TAG", "Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
+        //Log.println(Log.INFO, "TAG", "Color1 value " + String.format("#%06X", (0xFFFFFF & color1) ));
 
-      //  correctionValues =  calculateCorrection(color);
-        //color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
+        correctionValues =  calculateCorrection(color);
+        color1 = Color.rgb(Math.min(WHITE, (int)(Color.red(color1) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color1) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color1) * correctionValues[2])));
+        Log.println(Log.INFO, "COLOR1",Integer.toHexString(color1));
+        //Log.println(Log.INFO, "COLOR1_RED",Integer.toString(Color.red(color1)));
+        //Log.println(Log.INFO, "COLOR1_GREEN",Integer.toString(Color.green(color1)));
+        //Log.println(Log.INFO, "COLOR1_BLUE",Integer.toString(Color.blue(color1)));
         update();
     }
 
@@ -74,11 +78,11 @@ public class ColorViewFragment extends Fragment {
 
         Log.println(Log.INFO, "TAG", "Color2 value " + String.format("#%06X", (0xFFFFFF & color2)));
 
-        //correctionValues = calculateCorrection(color);
+        correctionValues = calculateCorrection(color);
 
-        //color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
-
-        //Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
+        color2 = Color.rgb(Math.min(WHITE, (int)(Color.red(color2) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color2) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color2) * correctionValues[2])));
+        Log.println(Log.INFO, "COLOR1",Integer.toString(color2));
+       // Log.println(Log.INFO, "TAG", "Correction Values " + Arrays.toString(correctionValues));
         update();
     }
 

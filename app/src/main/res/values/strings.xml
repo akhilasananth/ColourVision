@@ -18,7 +18,9 @@
         <item>"Green"</item>
         <item>"Blue"</item>
         <item>"Navy"</item>
+        <item>"Brown"</item>
         <item>"Black"</item>
+        <item>"Tan"</item>
     </string-array>
 
     <string-array name = "values">
@@ -37,6 +39,8 @@
         <item>#008000</item>
         <item>#0000FF</item>
         <item>#000080</item>
+        <item>#A52A2A</item>
         <item>#000000</item>
+        <item>#D2B48C</item>
     </string-array>
 </resources>

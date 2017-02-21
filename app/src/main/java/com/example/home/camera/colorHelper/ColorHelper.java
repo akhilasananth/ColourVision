@@ -2,6 +2,7 @@ package com.example.home.camera.colorHelper;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.example.home.camera.R;

@@ -129,6 +129,10 @@ public class CameraFragment extends PageFragment {
 
             //double[] temp = calculateCorrection(getAverageColor(colors));
             //color = Color.rgb((int) temp[0], (int) temp[1], (int) temp[2]);
+            for(int color:colors){
+                Log.println(Log.INFO,"COLORS_DETECTED", Integer.toHexString(color));
+            }
+
 
             color = getAverageColor(colors);
 
