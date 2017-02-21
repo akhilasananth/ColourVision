@@ -3,6 +3,7 @@ package com.example.home.camera;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
@@ -11,8 +12,10 @@ import android.support.v4.view.*;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -61,6 +64,13 @@ public class MainActivity extends FragmentActivity {
 
         //resetDatabase();
 
+        viewPager = new FragmentViewPager(this) {
+            @Override
+            public void onTouch() {
+                performAction(currentPage);
+            }
+        };
+
         viewPager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
@@ -79,14 +89,26 @@ public class MainActivity extends FragmentActivity {
         });
 
         actionListener = (SurfaceView) findViewById(R.id.actionListener);
-        actionListener.setOnTouchListener(new View.OnTouchListener() {
+        actionListener.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN)
-                    performAction(currentPage);
-                return true;
+            public void onSwipeLeft() {
+                viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
+            }
+
+            @Override
+            public void onTouch() {
+                performAction(currentPage);
             }
         });
+        actionListener.setZOrderOnTop(true);
+        actionListener.setAlpha(0);
+        SurfaceHolder surfaceHolder = actionListener.getHolder();
+        surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 
         speech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -100,13 +122,7 @@ public class MainActivity extends FragmentActivity {
         getFragmentManager().beginTransaction().add(R.id.colorView, colorViewFragment).commit();
         colorHelper = new ColorHelper(this);
     }
-/*
-    private void resetDatabase() {
-        dbHandler = new DBHandler(this);
 
-        dbHandler.onUpgrade(dbHandler.getWritableDatabase(), 0, 0);
-    }
-*/
     private void speak(String message) {
         speech.speak(message, TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
     }
