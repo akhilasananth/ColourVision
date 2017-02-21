@@ -1,8 +1,11 @@
 package com.example.home.camera.colorHelper;
 
+import android.graphics.Color;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.example.home.camera.colorHelper.ColorHelper.*;
 import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
@@ -13,26 +16,38 @@ import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 public class GreyscaleAlgorithm implements MatchingAlgorithm {
     @Override
     public List<Integer> getMatchingColors(int color) {
-        return null;
-    }
+        ArrayList<Integer> matchingColors = new ArrayList<>();
+        Random r = new Random();
+
+        for(int i =0; i<5;i++) {
+            int rn = r.nextInt(256); // Generates random numbers from 0 to 255
+
+            int newColor = Color.rgb(rn, rn, rn);
+
+            if (newColor != color) {
+                matchingColors.add(newColor);
+            }
+        }
+
+        return matchingColors;
+  }
 
     @Override
     public boolean isMatch(int color1, int color2){
-        double[] c1 = RGBtoHSL(color1);
-        double[] c2 = RGBtoHSL(color2);
-        boolean c1IslowSaturation = c1[2] <=10;
-        boolean c2IslowSaturation = c2[2] <=10;
-        boolean misMatch = false;
-
-        if((c1[1] <= 0.1 && c1IslowSaturation) && c2[1] >= 0.1 ){
-            misMatch = true;
-        } else if(c1[1] >= 0.1 && (c2[1] <= 0.1 && c2IslowSaturation)){
-            misMatch = true;
-        } else if((c1[1] <= 0.1 && c2[1] <= 0.1 )&& (c1IslowSaturation && c2IslowSaturation) && color1 != color2){
-            misMatch = true;
+        if(color1==color2){
+            return false;
+        }
+        else if(isGreyscaleColor(color1) || isGreyscaleColor(color2)){
+            return true;
         }
 
-        return misMatch;
+        return false;
+    }
+
+    private boolean isGreyscaleColor(int color){
+        return(Color.red(color)== Color.green(color)
+                && Color.red(color) == Color.blue(color)
+                && Color.green(color) == Color.blue(color) );
     }
 
 
