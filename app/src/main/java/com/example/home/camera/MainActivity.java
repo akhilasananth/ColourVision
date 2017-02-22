@@ -138,23 +138,27 @@ public class MainActivity extends FragmentActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
+                    Log.println(Log.INFO,"ON_CLICK_ACTION","Volume up button clicked");
                     pagerAdapter.updateFragments(currentPage);
                     colorViewFragment.setColor1(color);
                     speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                     currentColor = FIRST;
                     Log.i(TAG, ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                     color1 = color;
+
                     //dbHandler.insertItem(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN) {
+                    Log.println(Log.INFO,"ON_CLICK_ACTION","Volume down button clicked");
                     pagerAdapter.updateFragments(currentPage);
                     colorViewFragment.setColor2(color);
                     speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                     Log.i(TAG, ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                     currentColor = SECOND;
                     color2 = color;
+
                     //dbHandler.insertItem(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                 }
                 return true;
