@@ -13,7 +13,6 @@ import java.util.Locale;
 
 public class SpeechManager {
 
-    private Activity activity;
     private TextToSpeech speech;
 
     public SpeechManager(Activity activity) {
@@ -26,11 +25,11 @@ public class SpeechManager {
         speech.setLanguage(Locale.getDefault());
     }
 
-    private void speak(String message) {
+    public void speak(String message) {
         speech.speak(message, TextToSpeech.QUEUE_FLUSH, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
     }
 
-    private void speakList(List<String> messages) {
+    public void speakList(List<String> messages) {
         for (String s : messages) {
             speech.speak(s, TextToSpeech.QUEUE_ADD, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
         }

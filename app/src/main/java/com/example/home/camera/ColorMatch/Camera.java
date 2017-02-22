@@ -107,10 +107,10 @@ public class Camera {
 
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
-                public void onConfigured(CameraCaptureSession cameraCaptureSession) {
+                public void onConfigured(CameraCaptureSession session) {
                     if (cameraDevice == null)
                         return;
-                    cameraCaptureSession = cameraCaptureSession;
+                    cameraCaptureSession = session;
                     updatePreview();
                 }
 
@@ -185,5 +185,4 @@ public class Camera {
     public TextureView getTextureView() {
         return textureView;
     }
-
 }

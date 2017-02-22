@@ -3,9 +3,12 @@ package com.example.home.camera.ColorMatch;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -27,9 +30,9 @@ public class CameraActivity extends Activity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
-    private SurfaceView colorFinder;
+    private ColorFinder colorFinder;
 
-    private List<View> colorViews;
+    private ColorSelections colorSelections;
 
     private Camera camera;
 
@@ -38,6 +41,9 @@ public class CameraActivity extends Activity {
     private SpeechManager speechManager;
 
     private Matcher matcher;
+
+    private boolean running = true;
+    private boolean pause = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +55,10 @@ public class CameraActivity extends Activity {
 
         camera = new Camera(this);
 
-        colorFinder = (SurfaceView) findViewById(R.id.colorFinder);
+        colorFinder = (ColorFinder) findViewById(R.id.colorFinder);
+        colorFinder.setCamera(camera);
 
-        colorViews = new ArrayList<>();
-
-        colorViews.add(findViewById(R.id.color1));
-        colorViews.add(findViewById(R.id.color2));
-        colorViews.add(findViewById(R.id.color3));
-        colorViews.add(findViewById(R.id.color4));
-        colorViews.add(findViewById(R.id.color5));
-        colorViews.add(findViewById(R.id.color6));
+        colorSelections = (ColorSelections) findViewById(R.id.colorSelections);
 
         actionListener = (SurfaceView) findViewById(R.id.actionListener);
         actionListener.setZOrderOnTop(true);
@@ -73,9 +73,11 @@ public class CameraActivity extends Activity {
         });
         speechManager = new SpeechManager(this);
         matcher = new Matcher();
+
+        thread.start();
     }
 
-    public void checkMatch(List<Integer> colors) {
+    public void checkMatches() {
 
     }
 
@@ -86,12 +88,12 @@ public class CameraActivity extends Activity {
         switch(keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-
+                    colorSelections.addColor(Color.GREEN);
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_UP) {
-
+                    colorSelections.addColor(colorFinder.getColor());
                 }
                 return true;
             default:
@@ -110,21 +112,37 @@ public class CameraActivity extends Activity {
         }
     }
 
+    private Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            camera.openCamera();
+            while(running) {
+                if (!pause) {
+                    colorSelections.drawFrame();
+                    colorFinder.drawFrame();
+
+                }
+            }
+        }
+    });
+
     @Override
     protected void onResume() {
         super.onResume();
+        pause = false;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        pause = true;
     }
 
-    public List<View> getColorViews() {
-        return colorViews;
+    public ColorSelections getColorSelections() {
+        return colorSelections;
     }
 
-    public SurfaceView getColorFinder() {
+    public ColorFinder getColorFinder() {
         return colorFinder;
     }
 
