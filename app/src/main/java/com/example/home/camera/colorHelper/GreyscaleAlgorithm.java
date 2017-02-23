@@ -36,14 +36,6 @@ public class GreyscaleAlgorithm implements MatchingAlgorithm {
     public boolean isMatch(int color1, int color2){
         return (color1!=color2) && (isGreyscaleColor(color1) || isGreyscaleColor(color2));
     }
-
-    public boolean isGreyscaleColor(int i) {
-        return true;
-    }
-
-
-
-
 }
 
 
