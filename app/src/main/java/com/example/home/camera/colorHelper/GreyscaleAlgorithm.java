@@ -37,11 +37,7 @@ public class GreyscaleAlgorithm implements MatchingAlgorithm {
         return (color1!=color2) && (isGreyscaleColor(color1) || isGreyscaleColor(color2));
     }
 
-    private boolean isGreyscaleColor(int color){
-        return(Color.red(color)== Color.green(color)
-                && Color.red(color) == Color.blue(color)
-                && Color.green(color) == Color.blue(color) );
-    }
+
 
 
 }

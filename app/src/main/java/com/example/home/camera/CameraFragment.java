@@ -136,6 +136,8 @@ public class CameraFragment extends PageFragment {
 
             color = getAverageColor(colors);
 
+            Log.println(Log.INFO,"AVERAGE_COLOR", Integer.toHexString(color));
+
             overlayView.setColor(color);
             overlayView.drawFrame();
         }

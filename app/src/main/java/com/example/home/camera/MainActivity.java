@@ -141,6 +141,7 @@ public class MainActivity extends FragmentActivity {
                     Log.println(Log.INFO,"ON_CLICK_ACTION","Volume up button clicked");
                     pagerAdapter.updateFragments(currentPage);
                     colorViewFragment.setColor1(color);
+                    color = colorViewFragment.getColor1();
                     speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
                     currentColor = FIRST;
                     Log.i(TAG, ColorHelper.getColorName(ColorHelper.getClosestColor(color)));

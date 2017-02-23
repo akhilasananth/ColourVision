@@ -52,26 +52,55 @@ public class ColorHelper {
                 Math.pow(color2[2] - color1[2], 2));
     }
 
+    public static double colorDistance(int c1, int c2)
+    {
+        int red1 = Color.red(c1);
+        int red2 = Color.red(c2);
+        int rmean = (red1 + red2) >> 1;
+        int r = red1 - red2;
+        int g = Color.green(c1) - Color.green(c2);
+        int b = Color.blue(c1) - Color.blue(c2);
+        return Math.sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8));
+    }
+
     //Returns the name of the colour detected
     public static int getClosestColor(int color) {
         int closestColor = 0;
         double currentDistance = Double.MAX_VALUE;
+        if(colorMap.containsValue(color) || (isGreyscaleColor(color) && (color!=Color.BLACK) && (color!=Color.WHITE))){
+            double temp = colorDistance(color,color);
+            Log.println(Log.INFO, "COLOR_DISTANCE", Double.toString(temp));
+            closestColor = color;
+        }
+        else{
 
-        for (int currentColor : colorMap.values()) {
-            double tempDistance = getDeltaE(XYZtoCIELab(RGBtoXYZ(currentColor)), XYZtoCIELab(RGBtoXYZ(color)));
-            if(tempDistance < currentDistance){
-                currentDistance = tempDistance;
-                closestColor = currentColor;
-            }
-            if (currentDistance <= 2.3*2) {
-                return closestColor;
+            for (int currentColor : colorMap.values()) {
+
+                double tempDistance = getDeltaE(XYZtoCIELab(RGBtoXYZ(currentColor)), XYZtoCIELab(RGBtoXYZ(color)));
+                if(tempDistance < currentDistance){
+                    currentDistance = tempDistance;
+                    closestColor = currentColor;
+                }
+
+                if (currentDistance <= 2.3*2) {
+                    double temp = colorDistance(currentColor,color);
+                    Log.println(Log.INFO, "COLOR_DISTANCE", Double.toString(temp));
+                    return closestColor;
+                }
+
             }
         }
+
+
 
         return closestColor;
     }
 
-
+    public static boolean isGreyscaleColor(int color){
+        return(Color.red(color)== Color.green(color)
+                && Color.red(color) == Color.blue(color)
+                && Color.green(color) == Color.blue(color));
+    }
 
     public static int getColor(String colorName) {
         return colorMap.get(colorName);
@@ -80,10 +109,15 @@ public class ColorHelper {
     public static String getColorName(int color) {
 
         String colorName = "";
+        if(isGreyscaleColor(color) && (color!=Color.BLACK) && (color!=Color.WHITE)){
+            colorName = "Gray";
+        }
+        else {
 
-        for (String s : colorMap.keySet()) {
-            if (colorMap.get(s) == color) {
-                return s;
+            for (String s : colorMap.keySet()) {
+                if (colorMap.get(s) == color) {
+                    colorName = s;
+                }
             }
         }
 
@@ -118,21 +152,5 @@ public class ColorHelper {
         return Color.rgb(r, g, b);
     }
 
-    public static boolean inWarmRange(int color){
-        float[] hsvColor = new float[3];
-        Color.colorToHSV(color,hsvColor);
-        if((hsvColor[0] <= 90 && hsvColor[0] >= 0) && (hsvColor[0]>270) ){
-            return true;
-        }
-        return false;
-    }
 
-    public static boolean inCoolRange(int color){
-        float[] hsvColor = new float[3];
-        Color.colorToHSV(color,hsvColor);
-        if(hsvColor[0] > 90 && hsvColor[0] <= 270 ){
-            return true;
-        }
-        return false;
-    }
 }
