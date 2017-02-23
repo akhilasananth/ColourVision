@@ -15,7 +15,7 @@ public class ColorSelections extends SurfaceView {
 
     private int MAX_NUM_COLORS = 6;
 
-    private int numColors = 0;
+    private int colorIndex = 0;
 
     private int[] colors = {
             Color.BLACK,
@@ -23,13 +23,13 @@ public class ColorSelections extends SurfaceView {
             Color.BLACK,
             Color.BLACK,
             Color.BLACK,
-            Color.GREEN,
+            Color.BLACK,
     };
 
     private int[][] positions = {
-            {0, 0},{0, 1},
-            {1, 0},{1, 1},
-            {2, 0},{2, 1}
+            {0, 0},{1, 0},
+            {0, 1},{1, 1},
+            {0, 2},{1, 2}
     };
 
     public ColorSelections(Context context) {
@@ -55,32 +55,32 @@ public class ColorSelections extends SurfaceView {
 
             for (int i = 0; i < colors.length; i++) {
                 drawBorderedRect(canvas,
-                        positions[i][0] * getHeight(),
-                        positions[i][1] * getWidth(),
-                        height, width, colors[i]);
+                        positions[i][0] * width,
+                        positions[i][1] * height,
+                        width, height, colors[i]);
             }
 
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
 
-    private void drawBorderedRect(Canvas canvas, float l, float r, float h, float w, int mainColor) {
+    private void drawBorderedRect(Canvas canvas, float l, float t, float w, float h, int mainColor) {
         Paint p = new Paint();
         p.setStyle(Paint.Style.FILL);
         p.setColor(mainColor);
-        canvas.drawRect(l, r, h, w, p);
+        canvas.drawRect(l, t, l + w, t + h, p);
 
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(5);
         p.setColor(Color.BLACK);
-        canvas.drawRect(l, r, h, w, p);
+        canvas.drawRect(l, t, l + w, t + h, p);
     }
 
     public void addColor(int color) {
-        setColor(numColors, color);
-        numColors++;
-        if (numColors == MAX_NUM_COLORS) {
-            numColors = 0;
+        setColor(colorIndex, color);
+        colorIndex++;
+        if (colorIndex == MAX_NUM_COLORS) {
+            colorIndex = 0;
         }
     }
 

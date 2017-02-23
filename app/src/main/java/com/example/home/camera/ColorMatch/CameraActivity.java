@@ -3,47 +3,51 @@ package com.example.home.camera.ColorMatch;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.renderscript.RenderScript;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.home.camera.R;
+import com.example.home.camera.colorHelper.ColorHelper;
 import com.example.home.camera.colorHelper.Matcher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by robertfernandes on 2/21/2017.
  */
-
 public class CameraActivity extends Activity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
     private ColorFinder colorFinder;
 
-    private ColorSelections colorSelections;
-
     private Camera camera;
+
+    private ColorSelections colorSelections;
 
     private SurfaceView actionListener;
 
-    private SpeechManager speechManager;
-
-    private Matcher matcher;
-
     private boolean running = true;
     private boolean pause = false;
+
+    private int currentColor = Color.BLACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +57,9 @@ public class CameraActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.main_layout);
 
-        camera = new Camera(this);
+        camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
 
         colorFinder = (ColorFinder) findViewById(R.id.colorFinder);
-        colorFinder.setCamera(camera);
 
         colorSelections = (ColorSelections) findViewById(R.id.colorSelections);
 
@@ -71,8 +74,6 @@ public class CameraActivity extends Activity {
                 return false;
             }
         });
-        speechManager = new SpeechManager(this);
-        matcher = new Matcher();
 
         thread.start();
     }
@@ -88,12 +89,12 @@ public class CameraActivity extends Activity {
         switch(keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    colorSelections.addColor(Color.GREEN);
+                    colorSelections.addColor(currentColor);
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_UP) {
-                    colorSelections.addColor(colorFinder.getColor());
+                    colorSelections.addColor(currentColor);
                 }
                 return true;
             default:
@@ -115,16 +116,23 @@ public class CameraActivity extends Activity {
     private Thread thread = new Thread(new Runnable() {
         @Override
         public void run() {
-            camera.openCamera();
             while(running) {
                 if (!pause) {
-                    colorSelections.drawFrame();
-                    colorFinder.drawFrame();
-
+                    update();
                 }
             }
         }
     });
+
+    private void update() {
+        currentColor = camera.getAverageColor();
+
+        colorFinder.setColor(currentColor);
+        colorFinder.drawFrame();
+
+        colorSelections.drawFrame();
+
+    }
 
     @Override
     protected void onResume() {
@@ -144,10 +152,6 @@ public class CameraActivity extends Activity {
 
     public ColorFinder getColorFinder() {
         return colorFinder;
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 
 }
