@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Matcher {
 
-    enum MatchType {
+    public enum MatchType {
         Complimentary, Analogous, Warm, Cool, Greyscale, Triad
     }
 

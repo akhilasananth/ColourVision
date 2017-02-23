@@ -20,8 +20,7 @@ public class ColorMatchingController {
 
     public ColorMatchingController() {
         colorList = new ColorList(6);
-        matcher = new Matcher();
-        matcher.selectRandomStrategy();
+        matcher = new Matcher(Matcher.MatchType.Complimentary);
     }
 
     public List<Integer> getColors() {
