@@ -10,14 +10,13 @@ import android.view.View.OnTouchListener;
  * Created by robertfernandes on 2/9/2017.
  */
 
-public class OnSwipeTouchListener implements OnTouchListener {
+public abstract class OnSwipeTouchListener implements OnTouchListener {
 
     private final GestureDetector gestureDetector;
 
     public OnSwipeTouchListener(Context context) {
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
-
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -71,9 +70,9 @@ public class OnSwipeTouchListener implements OnTouchListener {
             return result;
         }
     }
-    public void onSwipeRight() {}
-    public void onSwipeLeft() {}
-    public void onSwipeTop() {}
-    public void onSwipeBottom() {}
-    public void onTouch() {}
+    public abstract void onSwipeRight();
+    public abstract void onSwipeLeft();
+    public abstract void onSwipeTop();
+    public abstract void onSwipeBottom();
+    public abstract void onTouch();
 }

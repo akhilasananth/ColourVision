@@ -5,7 +5,6 @@ import android.graphics.Color;
 import com.example.home.camera.colorHelper.Matcher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,12 +13,17 @@ import java.util.List;
 
 public class ColorMatchingController {
 
+    private static final int MAX_NUM_COLORS = 6;
+
     private ColorList colorList;
 
     private Matcher matcher;
 
-    public ColorMatchingController() {
-        colorList = new ColorList(6);
+    private ColorSelections colorSelections;
+
+    public ColorMatchingController(ColorSelections colorSelections) {
+        this.colorSelections = colorSelections;
+        colorList = new ColorList(MAX_NUM_COLORS);
         matcher = new Matcher(Matcher.MatchType.Complimentary);
     }
 
@@ -29,6 +33,20 @@ public class ColorMatchingController {
             list.add(i);
         }
         return list;
+    }
+
+    public void addColor(int color) {
+        colorList.addColor(color);
+        colorSelections.setColors(colorList.getColors());
+    }
+
+    public void resetColors() {
+        colorList = new ColorList(MAX_NUM_COLORS);
+        colorSelections.setColors(colorList.getColors());
+    }
+
+    public void checkMatches() {
+
     }
 
 }

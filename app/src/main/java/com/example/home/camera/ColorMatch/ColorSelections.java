@@ -7,15 +7,13 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
+import java.util.List;
+
 /**
  * Created by robertfernandes on 2/21/2017.
  */
 
 public class ColorSelections extends SurfaceView {
-
-    private int MAX_NUM_COLORS = 6;
-
-    private int colorIndex = 0;
 
     private int[] colors = {
             Color.BLACK,
@@ -76,16 +74,8 @@ public class ColorSelections extends SurfaceView {
         canvas.drawRect(l, t, l + w, t + h, p);
     }
 
-    public void addColor(int color) {
-        setColor(colorIndex, color);
-        colorIndex++;
-        if (colorIndex == MAX_NUM_COLORS) {
-            colorIndex = 0;
-        }
-    }
-
-    public void setColor(int pos, int color) {
-        colors[pos] = color;
+    public void setColors(int[] colors) {
+        this.colors = colors;
     }
 
 }

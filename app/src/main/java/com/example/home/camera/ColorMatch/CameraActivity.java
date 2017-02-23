@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.home.camera.OnSwipeTouchListener;
 import com.example.home.camera.R;
 import com.example.home.camera.colorHelper.ColorHelper;
 import com.example.home.camera.colorHelper.Matcher;
@@ -36,19 +37,60 @@ public class CameraActivity extends Activity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
+    /**
+     * View to show live color feed
+     */
     private ColorFinder colorFinder;
+    /**
+     * View to display selected colors
+     */
+    private ColorSelections colorSelections;
+    /**
+     * View to handle input over whole screen
+     */
+    private SurfaceView actionListener;
 
+
+    /**
+     * Camera controller object
+     */
     private Camera camera;
 
-    private ColorSelections colorSelections;
+    /**
+     * Controller object to handle color matching
+     */
+    private ColorMatchingController colorMatchingController;
 
-    private SurfaceView actionListener;
+    /**
+     * Controller object to handle Text to speech
+     */
+    private SpeechManager speechManager;
+
 
     private boolean running = true;
     private boolean pause = false;
 
     private int currentColor = Color.BLACK;
 
+    /**
+     * Thread to update the views
+     * calls update() function
+     */
+    private Thread updateThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while(running) {
+                if (!pause) {
+                    update();
+                }
+            }
+        }
+    });
+
+    /**
+     * onCreate function is called when the activity is created
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,31 +99,80 @@ public class CameraActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.main_layout);
 
-        camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
+        instantiateViews();
+        instantiateControllers();
 
+        updateThread.start();
+    }
+
+
+    /**
+     * Instantiate the View Objects
+     */
+    public void instantiateViews() {
         colorFinder = (ColorFinder) findViewById(R.id.colorFinder);
-
         colorSelections = (ColorSelections) findViewById(R.id.colorSelections);
 
         actionListener = (SurfaceView) findViewById(R.id.actionListener);
         actionListener.setZOrderOnTop(true);
         actionListener.setAlpha(0f);
         actionListener.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        actionListener.setOnTouchListener(new View.OnTouchListener() {
+        actionListener.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public void onSwipeRight() {
+                colorMatchingController.resetColors();
+            }
 
-                return false;
+            @Override
+            public void onSwipeLeft() {
+                colorMatchingController.resetColors();
+            }
+
+            @Override
+            public void onSwipeTop() {
+                colorMatchingController.resetColors();
+            }
+
+            @Override
+            public void onSwipeBottom() {
+                colorMatchingController.resetColors();
+            }
+
+            @Override
+            public void onTouch() {
+                colorMatchingController.checkMatches();
             }
         });
-
-        thread.start();
     }
 
-    public void checkMatches() {
+    /**
+     * Instantiate the Controller Objects
+     */
+    public void instantiateControllers() {
+        camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
+        speechManager = new SpeechManager(this);
+        colorMatchingController = new ColorMatchingController(colorSelections);
+    }
+
+    /**
+     * Update function used to update Views
+     */
+    private void update() {
+        currentColor = camera.getAverageColor();
+
+        colorFinder.setColor(currentColor);
+        colorFinder.drawFrame();
+
+        colorSelections.drawFrame();
 
     }
 
+    /**
+     * dispatchKeyEvent handles button presses
+     *
+     * @param event
+     * @return
+     */
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action = event.getAction();
         int keyCode = event.getKeyCode();
@@ -89,12 +180,12 @@ public class CameraActivity extends Activity {
         switch(keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    colorSelections.addColor(currentColor);
+                    colorMatchingController.addColor(currentColor);
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_UP) {
-                    colorSelections.addColor(currentColor);
+                    colorMatchingController.addColor(currentColor);
                 }
                 return true;
             default:
@@ -113,27 +204,6 @@ public class CameraActivity extends Activity {
         }
     }
 
-    private Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while(running) {
-                if (!pause) {
-                    update();
-                }
-            }
-        }
-    });
-
-    private void update() {
-        currentColor = camera.getAverageColor();
-
-        colorFinder.setColor(currentColor);
-        colorFinder.drawFrame();
-
-        colorSelections.drawFrame();
-
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -144,14 +214,6 @@ public class CameraActivity extends Activity {
     protected void onPause() {
         super.onPause();
         pause = true;
-    }
-
-    public ColorSelections getColorSelections() {
-        return colorSelections;
-    }
-
-    public ColorFinder getColorFinder() {
-        return colorFinder;
     }
 
 }
