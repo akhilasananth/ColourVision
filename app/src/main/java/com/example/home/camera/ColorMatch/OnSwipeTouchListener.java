@@ -1,4 +1,4 @@
-package com.example.home.camera;
+package com.example.home.camera.ColorMatch;
 
 import android.content.Context;
 import android.view.GestureDetector;

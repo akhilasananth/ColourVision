@@ -1,6 +1,7 @@
 package com.example.home.camera.ColorMatch;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.example.home.camera.colorHelper.Matcher;
 
@@ -13,7 +14,11 @@ import java.util.List;
 
 public class ColorMatchingController {
 
+    private static final String TAG = "ColroMatchingController";
+
     private static final int MAX_NUM_COLORS = 6;
+
+    private int initialColor = Color.BLACK;
 
     private ColorList colorList;
 
@@ -21,8 +26,11 @@ public class ColorMatchingController {
 
     private ColorSelections colorSelections;
 
-    public ColorMatchingController(ColorSelections colorSelections) {
+    private SpeechManager speechManager;
+
+    public ColorMatchingController(ColorSelections colorSelections, SpeechManager speechManager) {
         this.colorSelections = colorSelections;
+        this.speechManager = speechManager;
         colorList = new ColorList(MAX_NUM_COLORS);
         matcher = new Matcher(Matcher.MatchType.Complimentary);
     }
@@ -35,18 +43,29 @@ public class ColorMatchingController {
         return list;
     }
 
-    public void addColor(int color) {
+    public void addInitialColor(int color) {
+        initialColor = color;
+        colorSelections.setInitialColor(color);
+    }
+
+    public void addComparingColor(int color) {
         colorList.addColor(color);
-        colorSelections.setColors(colorList.getColors());
+        colorSelections.setComparingColors(colorList.getColors());
     }
 
     public void resetColors() {
         colorList = new ColorList(MAX_NUM_COLORS);
-        colorSelections.setColors(colorList.getColors());
+        colorSelections.setComparingColors(colorList.getColors());
+    }
+
+    public List<Integer> getMatchingColors() {
+        return matcher.isMatch(initialColor, getColors());
     }
 
     public void checkMatches() {
-
+        for (Integer i : getMatchingColors()) {
+            Log.e(TAG, "" + Integer.toHexString(i));
+        }
     }
 
 }

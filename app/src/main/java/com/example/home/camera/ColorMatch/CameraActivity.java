@@ -3,32 +3,17 @@ package com.example.home.camera.ColorMatch;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.renderscript.RenderScript;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.home.camera.OnSwipeTouchListener;
 import com.example.home.camera.R;
-import com.example.home.camera.colorHelper.ColorHelper;
-import com.example.home.camera.colorHelper.Matcher;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Created by robertfernandes on 2/21/2017.
@@ -151,7 +136,7 @@ public class CameraActivity extends Activity {
     public void instantiateControllers() {
         camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
         speechManager = new SpeechManager(this);
-        colorMatchingController = new ColorMatchingController(colorSelections);
+        colorMatchingController = new ColorMatchingController(colorSelections, speechManager);
     }
 
     /**
@@ -180,12 +165,12 @@ public class CameraActivity extends Activity {
         switch(keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    colorMatchingController.addColor(currentColor);
+                    colorMatchingController.addInitialColor(currentColor);
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_UP) {
-                    colorMatchingController.addColor(currentColor);
+                    colorMatchingController.addComparingColor(currentColor);
                 }
                 return true;
             default:

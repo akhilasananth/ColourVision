@@ -1,6 +1,7 @@
 package com.example.home.camera.colorHelper;
 
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
 import java.util.*;
 
@@ -51,6 +52,17 @@ public class Matcher {
             default:
                 return null;
         }
+    }
+
+    public List<Integer> isMatch(int color, List<Integer> colors) {
+        List<Integer> matchingColors = new ArrayList<>();
+        for (Integer i : colors) {
+            Log.e("hello", "comparing");
+            if (isMatch(color, i)){
+                matchingColors.add(i);
+            }
+        }
+        return matchingColors;
     }
 
     public boolean isMatch(int c1, int c2){

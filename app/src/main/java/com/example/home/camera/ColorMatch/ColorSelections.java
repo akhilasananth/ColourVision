@@ -15,7 +15,9 @@ import java.util.List;
 
 public class ColorSelections extends SurfaceView {
 
-    private int[] colors = {
+    private int initialColor = Color.BLACK;
+
+    private int[] comparingColors = {
             Color.BLACK,
             Color.BLACK,
             Color.BLACK,
@@ -51,12 +53,14 @@ public class ColorSelections extends SurfaceView {
 
             canvas.drawColor(Color.BLACK);
 
-            for (int i = 0; i < colors.length; i++) {
+            for (int i = 0; i < comparingColors.length; i++) {
                 drawBorderedRect(canvas,
                         positions[i][0] * width,
                         positions[i][1] * height,
-                        width, height, colors[i]);
+                        width, height, comparingColors[i]);
             }
+
+            drawBorderedRect(canvas, width/2, height/2, width, height*2, initialColor);
 
             getHolder().unlockCanvasAndPost(canvas);
         }
@@ -74,8 +78,12 @@ public class ColorSelections extends SurfaceView {
         canvas.drawRect(l, t, l + w, t + h, p);
     }
 
-    public void setColors(int[] colors) {
-        this.colors = colors;
+    public void setInitialColor(int color) {
+        this.initialColor = color;
+    }
+
+    public void setComparingColors(int[] colors) {
+        this.comparingColors = colors;
     }
 
 }
