@@ -3,6 +3,7 @@ package com.example.home.camera.ColorMatch;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.example.home.camera.colorHelper.ColorHelper;
 import com.example.home.camera.colorHelper.Matcher;
 
 import java.util.ArrayList;
@@ -63,9 +64,13 @@ public class ColorMatchingController {
     }
 
     public void checkMatches() {
+        List<String> colorNames = new ArrayList<>();
+
         for (Integer i : getMatchingColors()) {
-            Log.e(TAG, "" + Integer.toHexString(i));
+            colorNames.add(ColorHelper.getColorName(ColorHelper.getClosestColor(i)));
         }
+
+        speechManager.speakList(colorNames);
     }
 
 }

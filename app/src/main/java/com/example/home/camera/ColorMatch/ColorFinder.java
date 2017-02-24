@@ -45,7 +45,7 @@ public class ColorFinder extends SurfaceView {
 
             int closestColor = getClosestColor(color);
 
-            paint.setColor(closestColor);
+            paint.setColor(color);
             canvas.drawRect(10, 10, height, height, paint);
 
             paint.setStyle(Paint.Style.STROKE);

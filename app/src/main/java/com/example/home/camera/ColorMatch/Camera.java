@@ -207,7 +207,13 @@ public class Camera {
 
             bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
 
-            return ColorHelper.getAverageColor(colors);
+            double[] c = ColorHelper.calculateCorrection(ColorHelper.getAverageColor(colors));
+
+            int color = Color.rgb((int)c[0], (int)c[1], (int)c[2]);
+
+            Log.e(TAG, "" + Integer.toHexString(color));
+
+            return color;
         }
 
         return Color.BLACK;
