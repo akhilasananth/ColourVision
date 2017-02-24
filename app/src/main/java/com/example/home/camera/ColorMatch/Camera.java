@@ -52,8 +52,6 @@ public class Camera {
     private HandlerThread handlerThread;
     private Handler handler;
 
-    private ImageReader imageReader;
-
     private String cameraId;
 
     private CameraDevice cameraDevice;
@@ -65,8 +63,6 @@ public class Camera {
 
     private TextureView textureView;
 
-    private byte[] bytes;
-
     public Camera(Activity activity, TextureView textureView) {
         this.activity = activity;
         this.textureView = textureView;
@@ -76,7 +72,7 @@ public class Camera {
         handler = new Handler(handlerThread.getLooper());
     }
 
-    TextureView.SurfaceTextureListener surfaceTextureListener = new TextureView.SurfaceTextureListener() {
+    private TextureView.SurfaceTextureListener surfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             openCamera();
