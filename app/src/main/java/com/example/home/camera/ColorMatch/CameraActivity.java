@@ -1,16 +1,26 @@
 package com.example.home.camera.ColorMatch;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.home.camera.R;
@@ -36,17 +46,14 @@ public class CameraActivity extends Activity {
      */
     private SurfaceView actionListener;
 
-
     /**
      * Camera controller object
      */
     private Camera camera;
-
     /**
      * Controller object to handle color matching
      */
     private ColorMatchingController colorMatchingController;
-
     /**
      * Controller object to handle Text to speech
      */
@@ -88,6 +95,7 @@ public class CameraActivity extends Activity {
 
         colorHelper = new ColorHelper(this);
 
+
         instantiateViews();
         instantiateControllers();
 
@@ -99,6 +107,7 @@ public class CameraActivity extends Activity {
      * Instantiate the View Objects
      */
     public void instantiateViews() {
+
         colorFinder = (ColorFinder) findViewById(R.id.colorFinder);
         colorSelections = (ColorSelections) findViewById(R.id.colorSelections);
 
@@ -154,7 +163,6 @@ public class CameraActivity extends Activity {
         colorFinder.drawFrame();
 
         colorSelections.drawFrame();
-
     }
 
     /**
@@ -208,5 +216,4 @@ public class CameraActivity extends Activity {
         super.onPause();
         pause = true;
     }
-
 }

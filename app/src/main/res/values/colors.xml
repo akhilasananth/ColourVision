@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="backgroundColor">#ECEFF1</color>
+
     <color name="White">#FFFFFF</color>
     <color name="Yellow">#FFFF00</color>
     <color name="Fuchsia">#FF00FF</color>
