@@ -148,7 +148,7 @@ public class CameraActivity extends Activity {
      * Update function used to update Views
      */
     private void update() {
-        currentColor = camera.getAverageColor();
+        currentColor = camera.getColor();
 
         colorFinder.setColor(currentColor);
         colorFinder.drawFrame();

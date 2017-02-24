@@ -195,11 +195,13 @@ public class Camera {
         }
     }
 
-    public int getAverageColor() {
+    public int getColor() {
+
+        //Get colors from the 5 bits on the center of the camera view
         Bitmap bmp = getImage();
 
         if (bmp != null) {
-            int searchRadius = 10;
+            int searchRadius = 5;
             int searchDiameter = searchRadius * 2;
             int[] colors = new int[searchDiameter * searchDiameter];
             int startX = bmp.getWidth()/2 - searchRadius;
@@ -207,13 +209,17 @@ public class Camera {
 
             bmp.getPixels(colors, 0, searchDiameter, startX, startY, searchDiameter, searchDiameter);
 
-            double[] c = ColorHelper.calculateCorrection(ColorHelper.getAverageColor(colors));
+            //get the average color from the input colors
+            int color = ColorHelper.getAverageColor(colors);
+            Log.println(Log.INFO,"TEST_CAMERA_AVG_COLOR", Integer.toHexString(color));
 
-            int color = Color.rgb((int)c[0], (int)c[1], (int)c[2]);
+            //Gets the closest color to the corrected color
+            int correctedColor = ColorHelper.colorCorrector(color);
+            Log.println(Log.INFO,"TEST_CAMERA_CORR_COLOR", Integer.toHexString(correctedColor));
+            int finalColor = ColorHelper.getClosestColor(correctedColor);
+            Log.println(Log.INFO,"TEST_CAMERA_FINAL_COLOR", Integer.toHexString(finalColor));
 
-            Log.e(TAG, "" + Integer.toHexString(color));
-
-            return color;
+            return finalColor;
         }
 
         return Color.BLACK;

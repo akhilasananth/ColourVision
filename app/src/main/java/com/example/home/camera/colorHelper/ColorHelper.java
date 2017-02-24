@@ -120,6 +120,15 @@ public class ColorHelper {
         return rgbCorrectionValues;
     }
 
+    public static int colorCorrector(int color){
+
+        double[] correctionValues = calculateCorrection(color);
+        //int correctedColor = Color.rgb(Math.min(Color.WHITE, (int)(Color.red(color) * correctionValues[0])), Math.min(Color.WHITE, (int)(Color.green(color) * correctionValues[1])), Math.min(Color.WHITE,(int)(Color.blue(color) * correctionValues[2])));
+        int correctedColor = Color.rgb((int)(Color.red(color) * correctionValues[0]), (int)(Color.green(color) * correctionValues[1]), (int)(Color.blue(color) * correctionValues[2]));
+        Log.println(Log.INFO, "COLOR",Integer.toHexString(correctedColor));
+        return correctedColor;
+    }
+
     public static int getAverageColor(int[] colors) {
 
         int r = 0;
