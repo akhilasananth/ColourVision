@@ -197,7 +197,6 @@ public class CameraActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        camera.openCamera();
         camera.turnOnFlashlight();
         pause = false;
     }

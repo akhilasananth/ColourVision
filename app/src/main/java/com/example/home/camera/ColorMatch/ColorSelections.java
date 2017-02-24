@@ -26,10 +26,15 @@ public class ColorSelections extends SurfaceView {
             Color.BLACK,
     };
 
-    private int[][] positions = {
+    private int[][] positions1 = {
             {0, 0},{1, 0},
             {0, 1},{1, 1},
             {0, 2},{1, 2}
+    };
+
+    private int[][] positions = {
+            {0,2},{1,2},{2,2},
+            {0,3},{1,3},{2,3}
     };
 
     public ColorSelections(Context context) {
@@ -46,13 +51,20 @@ public class ColorSelections extends SurfaceView {
 
     public void drawFrame() {
         Canvas canvas = getHolder().lockCanvas();
-        int height = getHeight()/3;
-        int width = getWidth()/2;
 
         if (canvas != null) {
 
             canvas.drawColor(Color.BLACK);
 
+            //draw1(canvas);
+
+            // draw Inital color on top half
+            drawBorderedRect(canvas, 0, 0, getWidth(), getHeight()/2, initialColor);
+
+            int width = getWidth()/3;
+            int height = getHeight()/4;
+
+            // draw comparing colors on bottom half
             for (int i = 0; i < comparingColors.length; i++) {
                 drawBorderedRect(canvas,
                         positions[i][0] * width,
@@ -60,10 +72,23 @@ public class ColorSelections extends SurfaceView {
                         width, height, comparingColors[i]);
             }
 
-            drawBorderedRect(canvas, width/2, height/2, width, height*2, initialColor);
 
             getHolder().unlockCanvasAndPost(canvas);
         }
+    }
+
+    private void draw1(Canvas canvas) {
+        int height = getHeight()/3;
+        int width = getWidth()/2;
+
+        for (int i = 0; i < comparingColors.length; i++) {
+            drawBorderedRect(canvas,
+                    positions1[i][0] * width,
+                    positions1[i][1] * height,
+                    width, height, comparingColors[i]);
+        }
+
+        drawBorderedRect(canvas, width/2, height/2, width, height*2, initialColor);
     }
 
     private void drawBorderedRect(Canvas canvas, float l, float t, float w, float h, int mainColor) {
