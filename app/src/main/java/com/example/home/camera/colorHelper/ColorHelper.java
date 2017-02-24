@@ -19,6 +19,8 @@ import static com.example.home.camera.colorHelper.ColorSpaceConversion.*;
 
 public class ColorHelper {
 
+    private static final String TAG = "ColorHelper";
+
     public static final double JUST_NOTICEABLE_DIFFERENCE = 2.3; // in CIEL*a*b* space
 
     public static final double HUE_DIFFERENCE = 1.0 / 12.0;
@@ -40,6 +42,7 @@ public class ColorHelper {
         int index = 0;
 
         for (String name : colorName) {
+            Log.e(TAG, name);
             colorMap.put(name, Color.parseColor(colorHex[index]));
             index++;
         }
@@ -67,32 +70,16 @@ public class ColorHelper {
     public static int getClosestColor(int color) {
         int closestColor = 0;
         double currentDistance = Double.MAX_VALUE;
-        if(colorMap.containsValue(color) || (isGreyscaleColor(color) && (color!=Color.BLACK) && (color!=Color.WHITE))){
-            double temp = colorDistance(color,color);
-            Log.println(Log.INFO, "COLOR_DISTANCE", Double.toString(temp));
-            closestColor = color;
-        }
-        else{
-
             for (int currentColor : colorMap.values()) {
-
                 double tempDistance = getDeltaE(XYZtoCIELab(RGBtoXYZ(currentColor)), XYZtoCIELab(RGBtoXYZ(color)));
                 if(tempDistance < currentDistance){
                     currentDistance = tempDistance;
                     closestColor = currentColor;
                 }
-
                 if (currentDistance <= 2.3*2) {
-                    double temp = colorDistance(currentColor,color);
-                    Log.println(Log.INFO, "COLOR_DISTANCE", Double.toString(temp));
                     return closestColor;
                 }
-
             }
-        }
-
-
-
         return closestColor;
     }
 

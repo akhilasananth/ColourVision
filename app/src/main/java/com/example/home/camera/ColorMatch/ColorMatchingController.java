@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ColorMatchingController {
 
-    private static final String TAG = "ColroMatchingController";
+    private static final String TAG = "ColorMatchingController";
 
     private static final int MAX_NUM_COLORS = 6;
 

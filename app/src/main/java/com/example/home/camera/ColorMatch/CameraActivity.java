@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.home.camera.R;
+import com.example.home.camera.colorHelper.ColorHelper;
 
 /**
  * Created by robertfernandes on 2/21/2017.
@@ -51,6 +52,7 @@ public class CameraActivity extends Activity {
      */
     private SpeechManager speechManager;
 
+    private ColorHelper colorHelper;
 
     private boolean running = true;
     private boolean pause = false;
@@ -83,6 +85,8 @@ public class CameraActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.main_layout);
+
+        colorHelper = new ColorHelper(this);
 
         instantiateViews();
         instantiateControllers();
@@ -135,6 +139,7 @@ public class CameraActivity extends Activity {
      */
     public void instantiateControllers() {
         camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
+        camera.turnOnFlashlight();
         speechManager = new SpeechManager(this);
         colorMatchingController = new ColorMatchingController(colorSelections, speechManager);
     }
@@ -192,11 +197,15 @@ public class CameraActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        camera.openCamera();
+        camera.turnOnFlashlight();
         pause = false;
     }
 
     @Override
     protected void onPause() {
+        camera.turnOffFlashlight();
+        camera.closeCamera();
         super.onPause();
         pause = true;
     }

@@ -56,6 +56,8 @@ public class Camera {
 
     private String cameraId;
 
+    private CameraDevice cameraDevice;
+
     private Activity activity;
     private CaptureRequest.Builder captureRequestBuilder;
 
@@ -101,6 +103,7 @@ public class Camera {
         @Override
         public void onOpened(CameraDevice camera) {
             try {
+                cameraDevice = camera;
                 SurfaceTexture texture = textureView.getSurfaceTexture();
                 texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
                 Surface surface = new Surface(texture);
@@ -133,6 +136,7 @@ public class Camera {
             captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             try {
                 session.setRepeatingRequest(captureRequestBuilder.build(), null, handler);
+                turnOnFlashlight();
             } catch (Exception e) {
 
             }
@@ -163,6 +167,13 @@ public class Camera {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void closeCamera() {
+        if (cameraDevice != null) {
+            cameraDevice.close();
+            cameraDevice = null;
         }
     }
 

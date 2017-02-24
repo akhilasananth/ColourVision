@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceView;
 
 import static com.example.home.camera.colorHelper.ColorHelper.*;
@@ -15,6 +16,8 @@ import static com.example.home.camera.colorHelper.ColorHelper.*;
  */
 
 public class ColorFinder extends SurfaceView {
+
+    private static final String TAG = "ColorFinder";
 
     private int color = Color.BLACK;
     private Paint paint = new Paint();
@@ -40,7 +43,9 @@ public class ColorFinder extends SurfaceView {
 
             int height = getHeight() - 10;
 
-            paint.setColor(color);
+            int closestColor = getClosestColor(color);
+
+            paint.setColor(closestColor);
             canvas.drawRect(10, 10, height, height, paint);
 
             paint.setStyle(Paint.Style.STROKE);
@@ -51,7 +56,7 @@ public class ColorFinder extends SurfaceView {
             paint.setTextSize(90);
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.GREEN);
-            canvas.drawText(getColorName(getClosestColor(color)), 200, height/2, paint);
+            canvas.drawText(getColorName(closestColor), 200, height/2, paint);
 
             getHolder().unlockCanvasAndPost(canvas);
         }
