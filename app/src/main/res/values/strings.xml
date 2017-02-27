@@ -5,7 +5,7 @@
     <string-array name = "items">
         <item>"White"</item>
         <item>"Yellow"</item>
-        <item>"Fuchsia"</item>
+        <item>"Pink"</item>
         <item>"Red"</item>
         <item>"Silver"</item>
         <item>"Gray"</item>
@@ -21,6 +21,10 @@
         <item>"Brown"</item>
         <item>"Black"</item>
         <item>"Tan"</item>
+        <item>"LightPink"</item>
+        <item>"LightBlue"</item>
+        <item>"Beige"</item>
+        <item>"Orange"</item>
     </string-array>
 
     <string-array name = "values">
@@ -42,5 +46,9 @@
         <item>#A52A2A</item>
         <item>#000000</item>
         <item>#D2B48C</item>
+        <item>#FFB6C1</item>
+        <item>#87CEFA</item>
+        <item>#F5F5DC</item>
+        <item>#FFA500</item>
     </string-array>
 </resources>
