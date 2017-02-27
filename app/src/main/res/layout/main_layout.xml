@@ -34,4 +34,5 @@
         android:layout_height="match_parent"
         android:alpha="0"
         android:background="@android:color/transparent"/>
+
 </FrameLayout>
