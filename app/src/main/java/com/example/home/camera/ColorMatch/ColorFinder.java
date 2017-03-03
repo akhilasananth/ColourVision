@@ -15,7 +15,7 @@ import static com.example.home.camera.colorHelper.ColorHelper.*;
  * Created by robertfernandes on 2/21/2017.
  */
 
-public class ColorFinder extends SurfaceView {
+public class ColorFinder extends ColorView {
 
     private static final String TAG = "ColorFinder";
 
@@ -34,32 +34,19 @@ public class ColorFinder extends SurfaceView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void drawFrame() {
-        Canvas canvas = getHolder().lockCanvas();
+    public void drawFrame(Canvas canvas) {
+        canvas.drawColor(Color.WHITE);
+        paint.setStyle(Paint.Style.FILL);
 
-        if (canvas != null) {
-            canvas.drawColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL);
+        int height = getHeight() - 10;
+        int closestColor = getClosestColor(color);
 
-            int height = getHeight() - 10;
+        drawBorderedRect(canvas, 10, 10, height, height, color);
 
-            int closestColor = getClosestColor(color);
-
-            paint.setColor(color);
-            canvas.drawRect(10, 10, height, height, paint);
-
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5);
-            paint.setColor(Color.BLACK);
-            canvas.drawRect(10, 10, height, height, paint);
-
-            paint.setTextSize(90);
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.GREEN);
-            canvas.drawText(getColorName(closestColor), 200, height/2, paint);
-
-            getHolder().unlockCanvasAndPost(canvas);
-        }
+        paint.setTextSize(90);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.GREEN);
+        canvas.drawText(getColorName(closestColor), 200, height/2, paint);
     }
 
     public int getColor() {

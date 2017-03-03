@@ -10,6 +10,8 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -26,10 +28,12 @@ import android.widget.Toast;
 import com.example.home.camera.R;
 import com.example.home.camera.colorHelper.ColorHelper;
 
+import java.util.List;
+
 /**
  * Created by robertfernandes on 2/21/2017.
  */
-public class CameraActivity extends Activity {
+public class CameraActivity extends FragmentActivity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
@@ -45,6 +49,10 @@ public class CameraActivity extends Activity {
      * View to handle input over whole screen
      */
     private SurfaceView actionListener;
+    /**
+     * View pager to allow swiping between different views
+     */
+    private ViewPager viewPager;
 
     /**
      * Camera controller object
@@ -53,11 +61,20 @@ public class CameraActivity extends Activity {
     /**
      * Controller object to handle color matching
      */
-    private ColorMatchingController colorMatchingController;
+    private AlgorithmController algorithmController;
+    /**
+     * Controller object to handle emotion matching
+     */
+    private EmotionController emotionController;
     /**
      * Controller object to handle Text to speech
      */
     private SpeechManager speechManager;
+    /**
+     * Current color view controller
+     */
+    private ColorViewController currentController;
+    private ColorPagerFragmentAdapter colorPagerFragmentAdapter;
 
     private ColorHelper colorHelper;
 
@@ -95,7 +112,6 @@ public class CameraActivity extends Activity {
 
         colorHelper = new ColorHelper(this);
 
-
         instantiateViews();
         instantiateControllers();
 
@@ -107,9 +123,9 @@ public class CameraActivity extends Activity {
      * Instantiate the View Objects
      */
     public void instantiateViews() {
-
         colorFinder = (ColorFinder) findViewById(R.id.colorFinder);
-        colorSelections = (ColorSelections) findViewById(R.id.colorSelections);
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         actionListener = (SurfaceView) findViewById(R.id.actionListener);
         actionListener.setZOrderOnTop(true);
@@ -118,27 +134,29 @@ public class CameraActivity extends Activity {
         actionListener.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeRight() {
-                colorMatchingController.resetColors();
+                viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
+                currentController.onSwipeRight();
             }
 
             @Override
             public void onSwipeLeft() {
-                colorMatchingController.resetColors();
+                currentController.onSwipeLeft();
+                viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
             }
 
             @Override
             public void onSwipeTop() {
-                colorMatchingController.resetColors();
+                currentController.onSwipeUp();
             }
 
             @Override
             public void onSwipeBottom() {
-                colorMatchingController.resetColors();
+                currentController.onSwipeDown();
             }
 
             @Override
             public void onTouch() {
-                colorMatchingController.checkMatches();
+                currentController.onTouchScreen();
             }
         });
     }
@@ -150,7 +168,16 @@ public class CameraActivity extends Activity {
         camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
         camera.turnOnFlashlight();
         speechManager = new SpeechManager(this);
-        colorMatchingController = new ColorMatchingController(colorSelections, speechManager);
+
+        algorithmController = new AlgorithmController().initialize(speechManager, camera);
+        emotionController = new EmotionController().initialize(speechManager, camera);
+
+        colorPagerFragmentAdapter = new ColorPagerFragmentAdapter(getSupportFragmentManager(),
+                algorithmController,
+                emotionController);
+
+        viewPager.setAdapter(colorPagerFragmentAdapter);
+
     }
 
     /**
@@ -160,9 +187,11 @@ public class CameraActivity extends Activity {
         currentColor = camera.getColor();
 
         colorFinder.setColor(currentColor);
-        colorFinder.drawFrame();
 
-        colorSelections.drawFrame();
+        colorFinder.draw();
+
+        currentController = (ColorViewController)colorPagerFragmentAdapter.getItem(viewPager.getCurrentItem());
+        currentController.drawViews();
     }
 
     /**
@@ -178,12 +207,12 @@ public class CameraActivity extends Activity {
         switch(keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    colorMatchingController.addInitialColor(currentColor);
+                    currentController.onVolumeUp();
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_UP) {
-                    colorMatchingController.addComparingColor(currentColor);
+                    currentController.onVolumeDown();
                 }
                 return true;
             default:
