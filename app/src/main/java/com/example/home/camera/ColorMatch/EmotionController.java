@@ -1,5 +1,6 @@
 package com.example.home.camera.ColorMatch;
 
+import android.content.Context;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -35,10 +36,10 @@ public class EmotionController extends ColorViewController {
     private String emotion = "";
     private ColorSelections colorSelections;
     private NumberPicker numberPicker;
+    private Context context;
+    private String[] emotions;
 
-    private String[] emotions = {
-            "1", "2", "3", "4", "5"
-    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +59,9 @@ public class EmotionController extends ColorViewController {
         emotion = emotions[numberPicker.getValue()];
     }
 
-    public EmotionController initialize(SpeechManager speechManager, Camera camera) {
+    public EmotionController initialize(SpeechManager speechManager, Camera camera, Context c) {
+        context = c;
+        this.emotions = context.getResources().getStringArray(R.array.emotions);
         this.speechManager = speechManager;
         this.camera = camera;
         return this;

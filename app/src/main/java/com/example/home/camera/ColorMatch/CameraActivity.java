@@ -170,7 +170,7 @@ public class CameraActivity extends FragmentActivity {
         speechManager = new SpeechManager(this);
 
         algorithmController = new AlgorithmController().initialize(speechManager, camera);
-        emotionController = new EmotionController().initialize(speechManager, camera);
+        emotionController = new EmotionController().initialize(speechManager, camera,this);
 
         colorPagerFragmentAdapter = new ColorPagerFragmentAdapter(getSupportFragmentManager(),
                 algorithmController,
