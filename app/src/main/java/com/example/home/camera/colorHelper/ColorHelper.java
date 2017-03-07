@@ -34,17 +34,23 @@ public class ColorHelper {
     private Context context;
 
     private static final HashMap<String, Integer> colorMap = new HashMap<>();
+    private static final HashMap<Integer, String> emotionMap = new HashMap<>();
+
 
     public ColorHelper(Context c) {
         context = c;
         String[] colorName = context.getResources().getStringArray(R.array.items);
         String[] colorHex = context.getResources().getStringArray(R.array.values);
-        int index = 0;
+        String[] colorEmotions = context.getResources().getStringArray(R.array.emotions);
 
-        for (String name : colorName) {
-            Log.e(TAG, name);
-            colorMap.put(name, Color.parseColor(colorHex[index]));
-            index++;
+        for (int i =0; i<colorName.length; i++) {
+           // Log.e(TAG, colorName[i]);
+            colorMap.put(colorName[i], Color.parseColor(colorHex[i]));
+        }
+
+        for (int i =0; i<colorName.length; i++) {
+            // Log.e(TAG, colorName[i]);
+            emotionMap.put(Color.parseColor(colorHex[i]),colorEmotions[i]);
         }
     }
 
@@ -148,5 +154,7 @@ public class ColorHelper {
         return Color.rgb(r, g, b);
     }
 
-
+    public static String getColorEmotion(int color){
+        return emotionMap.get(color);
+    }
 }

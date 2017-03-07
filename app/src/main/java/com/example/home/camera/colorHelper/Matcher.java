@@ -20,6 +20,8 @@ public class Matcher {
             new WarmAlgorithm()
     };
 
+    private EmotionsAlgorithm emotionsAlgorithm = new EmotionsAlgorithm();
+
     public enum emotions{
         weight, warmth
     }
@@ -72,6 +74,19 @@ public class Matcher {
         List<Integer> matchingColors = new ArrayList<>();
         for (Integer i : colors) {
             if (isMatch(color, i)){
+                matchingColors.add(i);
+            }
+        }
+        return matchingColors;
+    }
+    public boolean isMatch(String emotion, int color){
+        return (emotionsAlgorithm.isMatch(emotion,color));
+    }
+
+    public List<Integer> isMatch(String emotion, List<Integer> colors){
+        List<Integer> matchingColors = new ArrayList<>();
+        for (Integer i : colors) {
+            if (isMatch(emotion, i)){
                 matchingColors.add(i);
             }
         }

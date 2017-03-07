@@ -9,32 +9,10 @@ import com.example.home.camera.R;
  */
 
 public class EmotionsAlgorithm {
-    private String[] colorHex;
-    private String[] colorEmotions;
-    private Context context;
-    private String emotion;
 
-    public EmotionsAlgorithm(Context c, String emotionEntered){
-        this.emotion = emotionEntered;
-        this.context = c;
-        this.colorHex = context.getResources().getStringArray(R.array.values);
-        this.colorEmotions = context.getResources().getStringArray(R.array.emotions);
-    }
+    public boolean isMatch(String emotion,int color){
 
-    private int getIndex(int color){
-        String hexVal = "#" + Integer.toHexString(color).substring(2);
-        int index =0;
-        for(int i = 0; i<colorHex.length; i++){
-            if(colorHex[i].equals(hexVal)){
-                index = i;
-            }
-        }
-        return index;
-    }
-
-
-    private boolean isMatch(int color){
-        return (colorEmotions[getIndex(color)].equals(emotion));
+        return (ColorHelper.getColorEmotion(color).equals(emotion));
     }
 
 
