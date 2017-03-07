@@ -11,20 +11,6 @@ import java.util.List;
 
 public abstract class ColorViewController extends Fragment {
 
-    protected List<ColorView> colorViewList = new ArrayList<>();
-
-    public void addView(ColorView colorView) {
-        colorViewList.add(colorView);
-    }
-
-    public void drawViews() {
-        for (ColorView cv : colorViewList) {
-            if (cv != null) {
-                cv.draw();
-            }
-        }
-    }
-
     public abstract void onVolumeUp();
 
     public abstract void onVolumeDown();

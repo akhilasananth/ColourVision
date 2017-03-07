@@ -1,63 +1,65 @@
 package com.example.home.camera.ColorMatch;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.example.home.camera.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by robertfernandes on 2/21/2017.
  */
 
-public class ColorSelections extends ColorView {
+public class ColorSelections {
 
-    private int[] comparingColors = {
-            Color.BLACK,
-            Color.BLACK,
-            Color.BLACK,
-            Color.BLACK,
-            Color.BLACK,
-            Color.BLACK,
-    };
+    private static final int MAX_NUM_COLORS = 6;
 
-    private int[][] positions = {
-            {0,0},{1,0},{2,0},
-            {0,1},{1,1},{2,1}
-    };
+    private View[] colors = new View[MAX_NUM_COLORS];
 
-    public ColorSelections(Context context) {
-        super(context);
+    private ColorList colorList = new ColorList(MAX_NUM_COLORS);
+
+    public ColorSelections(View view) {
+        colors[0] = view.findViewById(R.id.color1);
+        colors[1] = view.findViewById(R.id.color2);
+        colors[2] = view.findViewById(R.id.color3);
+        colors[3] = view.findViewById(R.id.color4);
+        colors[4] = view.findViewById(R.id.color5);
+        colors[5] = view.findViewById(R.id.color6);
     }
 
-    public ColorSelections(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public void addColor(int color) {
+        colorList.addColor(color);
+        updateColors();
     }
 
-    public ColorSelections(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public void drawFrame(Canvas canvas) {
-        canvas.drawColor(Color.BLACK);
-
-        int width = getWidth()/3;
-        int height = getHeight()/2;
-
-        // draw comparing colors on bottom half
-        for (int i = 0; i < comparingColors.length; i++) {
-            drawBorderedRect(canvas,
-                    positions[i][0] * width,
-                    positions[i][1] * height,
-                    width, height, comparingColors[i]);
+    public void updateColors() {
+        int[] colorArray = colorList.getColors();
+        for (int i = 0; i < MAX_NUM_COLORS; i++) {
+            colors[i].setBackgroundColor(colorArray[i]);
         }
     }
 
-    public void setComparingColors(int[] colors) {
-        this.comparingColors = colors;
+    public void resetColors() {
+        colorList = new ColorList(MAX_NUM_COLORS);
+    }
+
+    public List<Integer> getColors() {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i : colorList.getColors()) {
+            list.add(i);
+        }
+        return list;
     }
 
 }

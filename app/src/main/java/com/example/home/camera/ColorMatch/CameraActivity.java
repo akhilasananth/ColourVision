@@ -187,11 +187,9 @@ public class CameraActivity extends FragmentActivity {
         currentColor = camera.getColor();
 
         colorFinder.setColor(currentColor);
-
-        colorFinder.draw();
+        colorFinder.drawFrame();
 
         currentController = (ColorViewController)colorPagerFragmentAdapter.getItem(viewPager.getCurrentItem());
-        currentController.drawViews();
     }
 
     /**

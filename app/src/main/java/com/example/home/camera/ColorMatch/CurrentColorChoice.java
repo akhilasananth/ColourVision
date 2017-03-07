@@ -4,34 +4,32 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.View;
+
+import com.example.home.camera.R;
 
 /**
  * Created by robertfernandes on 3/3/2017.
  */
 
-public class CurrentColorChoice extends ColorView {
+public class CurrentColorChoice {
 
-    private int initialColor = Color.BLACK;
+    private int color;
 
-    public CurrentColorChoice(Context context) {
-        super(context);
-    }
+    private View colorView;
 
-    public CurrentColorChoice(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public CurrentColorChoice(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public void drawFrame(Canvas canvas) {
-        // draw Inital color on top half
-        drawBorderedRect(canvas, 0, 0, getWidth(), getHeight(), initialColor);
+    public CurrentColorChoice(View view) {
+        color = Color.BLACK;
+        colorView = view.findViewById(R.id.initialColor);
     }
 
     public void setColor(int color) {
-        this.initialColor = color;
+        this.color = color;
+        colorView.setBackgroundColor(color);
+    }
+
+    public int getColor() {
+        return color;
     }
 
 

@@ -22,10 +22,6 @@ public class AlgorithmController extends ColorViewController {
 
     private static final String TAG = "AlgorithmController";
 
-    private static final int MAX_NUM_COLORS = 6;
-
-    private int initialColor = Color.BLACK;
-
     private ColorSelections colorSelections;
     private SpeechManager speechManager;
     private CurrentColorChoice currentChoice;
@@ -33,15 +29,6 @@ public class AlgorithmController extends ColorViewController {
     private Camera camera;
 
     private Matcher matcher = new Matcher(Matcher.MatchType.Complimentary);
-    private ColorList colorList = new ColorList(MAX_NUM_COLORS);
-
-    public List<Integer> getColors() {
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i : colorList.getColors()) {
-            list.add(i);
-        }
-        return list;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,30 +38,24 @@ public class AlgorithmController extends ColorViewController {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        currentChoice = (CurrentColorChoice) getView().findViewById(R.id.currentChoice);
-        colorSelections = (ColorSelections) getView().findViewById(R.id.colorSelections);
-
-        addView(currentChoice);
-        addView(colorSelections);
+        currentChoice = new CurrentColorChoice(getView().findViewById(R.id.initialColor));
+        colorSelections = new ColorSelections(getView().findViewById(R.id.colorSelections));
     }
 
     public void addInitialColor(int color) {
-        initialColor = color;
         currentChoice.setColor(color);
     }
 
     public void addComparingColor(int color) {
-        colorList.addColor(color);
-        colorSelections.setComparingColors(colorList.getColors());
+        colorSelections.addColor(color);
     }
 
     public void resetColors() {
-        colorList = new ColorList(MAX_NUM_COLORS);
-        colorSelections.setComparingColors(colorList.getColors());
+        colorSelections.resetColors();
     }
 
     public List<Integer> getMatchingColors() {
-        return matcher.isMatch(initialColor, getColors());
+        return matcher.isMatch(currentChoice.getColor(), colorSelections.getColors());
     }
 
     public void checkMatches() {
@@ -93,22 +74,18 @@ public class AlgorithmController extends ColorViewController {
         return this;
     }
 
-    public void drawViews() {
-        if (colorSelections != null && currentChoice != null) {
-            colorSelections.draw();
-            currentChoice.draw();
-        }
-
-    }
-
     @Override
     public void onVolumeUp() {
-        addInitialColor(camera.getColor());
+        int color = camera.getColor();
+        addInitialColor(color);
+        speechManager.speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
     }
 
     @Override
     public void onVolumeDown() {
-        addComparingColor(camera.getColor());
+        int color = camera.getColor();
+        addComparingColor(color);
+        speechManager.speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
     }
 
     @Override

@@ -2,16 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     android:weightSum="1">
-    <com.example.home.camera.ColorMatch.CurrentColorChoice
-        android:id="@+id/currentChoice"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"/>
+        android:layout_weight="0.5">
+        <TextView
+            android:id="@+id/initialColor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/inital_color_margin"/>
+    </FrameLayout>
 
-    <com.example.home.camera.ColorMatch.ColorSelections
+    <include
         android:id="@+id/colorSelections"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"/>
+        android:layout_weight="0.5"
+        layout="@layout/color_selections"/>
+
+
+
 </LinearLayout>
