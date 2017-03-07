@@ -11,6 +11,10 @@ import java.util.*;
 
 public class Matcher {
 
+    public enum emotions{
+        weight, warmth
+    }
+
     public enum MatchType {
         Complimentary, Analogous, Warm, Cool, Greyscale, Triad
     }
@@ -24,6 +28,7 @@ public class Matcher {
     public Matcher(MatchType matchType) {
         matchingAlgorithm = createMatchingAlgorithm(matchType);
     }
+
 
     private MatchingAlgorithm selectStrategy() {
 

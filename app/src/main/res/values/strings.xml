@@ -7,23 +7,18 @@
         <item>"Yellow"</item>
         <item>"Pink"</item>
         <item>"Red"</item>
-        <item>"Silver"</item>
         <item>"Gray"</item>
-        <item>"Olive"</item>
         <item>"Purple"</item>
         <item>"Maroon"</item>
-        <item>"Aqua"</item>
         <item>"Lime"</item>
         <item>"Teal"</item>
         <item>"Green"</item>
         <item>"Blue"</item>
-        <item>"Navy"</item>
         <item>"Brown"</item>
         <item>"Black"</item>
         <item>"Tan"</item>
         <item>"LightPink"</item>
         <item>"LightBlue"</item>
-        <item>"Beige"</item>
         <item>"Orange"</item>
     </string-array>
 
@@ -32,23 +27,37 @@
         <item>#FFFF00</item>
         <item>#FF00FF</item>
         <item>#FF0000</item>
-        <item>#C0C0C0</item>
-        <item>#808080</item>
-        <item>#808000</item>
-        <item>#800080</item>
+        <item>#A0A0A0</item>
+        <item>#59218e</item>
         <item>#800000</item>
-        <item>#00FFFF</item>
         <item>#00FF00</item>
         <item>#008080</item>
         <item>#008000</item>
         <item>#0000FF</item>
-        <item>#000080</item>
         <item>#A52A2A</item>
         <item>#000000</item>
         <item>#D2B48C</item>
         <item>#FFB6C1</item>
         <item>#87CEFA</item>
-        <item>#F5F5DC</item>
         <item>#FFA500</item>
+    </string-array>
+    <string-array name = "emotions">
+        <item>innocent</item>
+        <item>happy</item>
+        <item>romantic</item>
+        <item>angry</item>
+        <item>sad</item>
+        <item>tired</item>
+        <item>loved</item>
+        <item>sick</item>
+        <item>confused</item>
+        <item>comfortable</item>
+        <item>cold</item>
+        <item>depressed</item>
+        <item>fearful</item>
+        <item>young</item>
+        <item>ashamed</item>
+        <item>calm</item>
+        <item>hopeful</item>
     </string-array>
 </resources>
