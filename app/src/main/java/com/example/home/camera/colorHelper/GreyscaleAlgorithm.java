@@ -34,7 +34,9 @@ public class GreyscaleAlgorithm implements MatchingAlgorithm {
 
     @Override
     public boolean isMatch(int color1, int color2){
-        return (color1!=color2) && (isGreyscaleColor(color1) || isGreyscaleColor(color2));
+        Log.e("Color1", "" + color1);
+        Log.e("Color2", "" + color2);
+        return (color1!=color2) && ((isGreyscaleColor(color1) || isGreyscaleColor(color2)));
     }
 }
 

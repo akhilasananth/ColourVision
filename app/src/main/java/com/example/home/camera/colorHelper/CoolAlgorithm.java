@@ -43,6 +43,6 @@ public class CoolAlgorithm implements MatchingAlgorithm {
 
     @Override
     public boolean isMatch(int color1, int color2) {
-        return(inCoolRange(color1)&& inCoolRange(color2));
+        return((color1!=color2)&& inCoolRange(color1)&& inCoolRange(color2));
     }
 }

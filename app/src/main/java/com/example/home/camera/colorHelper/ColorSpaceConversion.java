@@ -1,7 +1,7 @@
 package com.example.home.camera.colorHelper;
 
 import android.graphics.Color;
-import android.util.Log;
+
 
 /**
  * Created by robertfernandes on 1/20/2017.
@@ -136,7 +136,6 @@ public class ColorSpaceConversion {
             H = ( (r - g) / (max - min) / 6.0) + 2.0/3.0;
         }
 
-        Log.d("HUE", "RGBtoHSL: "+H);
         return (new double[]{H,S,L});
     }
 

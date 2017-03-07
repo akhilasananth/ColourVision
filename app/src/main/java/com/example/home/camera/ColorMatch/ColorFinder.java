@@ -72,7 +72,6 @@ public class ColorFinder extends SurfaceView {
 
 
     public void setColor(int color) {
-        Log.println(Log.INFO,"ColorFinder_SET_COLOR", Integer.toHexString(color));
         this.color = color;
     }
 }

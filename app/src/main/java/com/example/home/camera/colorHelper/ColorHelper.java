@@ -126,7 +126,6 @@ public class ColorHelper {
         double[] correctionValues = calculateCorrection(color);
         int correctedColor = Color.rgb(Math.min(WHITE, (int)(Color.red(color) * correctionValues[0])), Math.min(WHITE, (int)(Color.green(color) * correctionValues[1])), Math.min(WHITE,(int)(Color.blue(color) * correctionValues[2])));
         //int correctedColor = Color.rgb((int)(Color.red(color) * correctionValues[0]), (int)(Color.green(color) * correctionValues[1]), (int)(Color.blue(color) * correctionValues[2]));
-        Log.println(Log.INFO, "COLOR",Integer.toHexString(correctedColor));
         return correctedColor;
     }
 

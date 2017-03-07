@@ -36,6 +36,7 @@ public class EmotionsAlgorithm {
         return index;
     }
 
+
     private boolean equalsEmotion(int color){
         return (colorEmotions[getIndex(color)].equals(emotion));
     }

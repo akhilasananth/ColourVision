@@ -11,6 +11,15 @@ import java.util.*;
 
 public class Matcher {
 
+    private MatchingAlgorithm[] matchingAlgorithms = {
+            new ComplimentaryAlgorithm(),
+            new CoolAlgorithm(),
+            new AnalogousAlgorithm(),
+            new TriadAlgorithm(),
+            new GreyscaleAlgorithm(),
+            new WarmAlgorithm()
+    };
+
     public enum emotions{
         weight, warmth
     }
@@ -62,7 +71,6 @@ public class Matcher {
     public List<Integer> isMatch(int color, List<Integer> colors) {
         List<Integer> matchingColors = new ArrayList<>();
         for (Integer i : colors) {
-            Log.e("hello", "comparing");
             if (isMatch(color, i)){
                 matchingColors.add(i);
             }
@@ -71,11 +79,11 @@ public class Matcher {
     }
 
     public boolean isMatch(int c1, int c2){
-        return  matchingAlgorithm.isMatch(c1, c2);
-    }
-
-    public List<Integer> getMatchingColors(int color) {
-        return matchingAlgorithm.getMatchingColors(color);
+        for (MatchingAlgorithm m : matchingAlgorithms) {
+            if (m.isMatch(c1, c2))
+                return true;
+        }
+        return false;
     }
 
 }

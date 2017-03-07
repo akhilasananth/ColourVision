@@ -45,6 +45,6 @@ public class AnalogousAlgorithm implements MatchingAlgorithm {
 
         double hueDifference = Math.abs(c1[0] - c2[0]);
 
-        return hueDifference <= HUE_DIFFERENCE;
+        return ( (hueDifference <= (HUE_DIFFERENCE+(HUE_DIFFERENCE/2))) && (hueDifference >= (HUE_DIFFERENCE/2)));
     }
 }

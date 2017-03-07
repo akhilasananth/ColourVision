@@ -207,13 +207,12 @@ public class Camera {
 
             //get the average color from the input colors
             int color = ColorHelper.getAverageColor(colors);
-            Log.println(Log.INFO,"TEST_CAMERA_AVG_COLOR", Integer.toHexString(color));
+
 
             //Gets the closest color to the corrected color
             int correctedColor = ColorHelper.colorCorrector(color);
-            Log.println(Log.INFO,"TEST_CAMERA_CORR_COLOR", Integer.toHexString(correctedColor));
+
             int finalColor = ColorHelper.getClosestColor(correctedColor);
-            Log.println(Log.INFO,"TEST_CAMERA_FINAL_COLOR", Integer.toHexString(finalColor));
 
             return finalColor;
         }
