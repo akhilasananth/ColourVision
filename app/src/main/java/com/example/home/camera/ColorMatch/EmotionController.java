@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.home.camera.R;
 import com.example.home.camera.colorHelper.ColorHelper;
+import com.example.home.camera.colorHelper.Matcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class EmotionController extends ColorViewController {
     private Context context;
     private String[] emotions;
 
-
+    private Matcher matcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,6 +72,18 @@ public class EmotionController extends ColorViewController {
         colorSelections.addColor(color);
     }
 
+    public List<Integer> getMatchingColors() {
+        return matcher.isMatch(emotion, colorSelections.getColors());
+    }
+
+    public void checkMatches() {
+        List<String> colorNames = new ArrayList<>();
+
+        for (Integer i : getMatchingColors()) {
+            colorNames.add(ColorHelper.getColorName(i));
+        }
+    }
+
     @Override
     public void onVolumeUp() {
         speechManager.speak(emotion);
@@ -85,7 +98,7 @@ public class EmotionController extends ColorViewController {
 
     @Override
     public void onTouchScreen() {
-
+        checkMatches();
     }
 
     @Override

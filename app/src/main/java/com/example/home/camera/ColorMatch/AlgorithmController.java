@@ -62,7 +62,7 @@ public class AlgorithmController extends ColorViewController {
         List<String> colorNames = new ArrayList<>();
 
         for (Integer i : getMatchingColors()) {
-            colorNames.add(ColorHelper.getColorName(ColorHelper.getClosestColor(i)));
+            colorNames.add(ColorHelper.getColorName(i));
         }
 
         speechManager.speakList(colorNames);
