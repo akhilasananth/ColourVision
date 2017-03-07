@@ -21,10 +21,6 @@ public class EmotionsAlgorithm {
         this.colorEmotions = context.getResources().getStringArray(R.array.emotions);
     }
 
-    public boolean isMatch(int c1, int c2){
-        return(equalsEmotion(c1)|| equalsEmotion(c2));
-    }
-
     private int getIndex(int color){
         String hexVal = "#" + Integer.toHexString(color).substring(2);
         int index =0;
@@ -37,7 +33,7 @@ public class EmotionsAlgorithm {
     }
 
 
-    private boolean equalsEmotion(int color){
+    private boolean isMatch(int color){
         return (colorEmotions[getIndex(color)].equals(emotion));
     }
 
