@@ -13,6 +13,8 @@ public class ColorList {
 
     private int maxNumColors = 0;
 
+    private int numColors = 0;
+
     private int index = 0;
 
     private int[] colors;

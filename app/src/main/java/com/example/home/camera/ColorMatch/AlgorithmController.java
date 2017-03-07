@@ -28,7 +28,7 @@ public class AlgorithmController extends ColorViewController {
 
     private Camera camera;
 
-    private Matcher matcher = new Matcher(Matcher.MatchType.Complimentary);
+    private Matcher matcher = new Matcher();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

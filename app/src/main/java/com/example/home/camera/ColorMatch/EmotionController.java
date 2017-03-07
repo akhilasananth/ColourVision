@@ -40,7 +40,7 @@ public class EmotionController extends ColorViewController {
     private Context context;
     private String[] emotions;
 
-    private Matcher matcher;
+    private Matcher matcher = new Matcher();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
