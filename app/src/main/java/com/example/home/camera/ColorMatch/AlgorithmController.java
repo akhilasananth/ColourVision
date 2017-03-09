@@ -61,8 +61,10 @@ public class AlgorithmController extends ColorViewController {
     public void checkMatches() {
         List<String> colorNames = new ArrayList<>();
 
-        for (Integer i : getMatchingColors()) {
-            colorNames.add(ColorHelper.getColorName(i));
+        List<Integer> colors = getMatchingColors();
+
+        for (Integer i : colors) {
+            colorNames.add("Color " + (colors.indexOf(i) + 1) + " " + ColorHelper.getColorName(i));
         }
 
         speechManager.speakList(colorNames);
@@ -78,14 +80,14 @@ public class AlgorithmController extends ColorViewController {
     public void onVolumeUp() {
         int color = camera.getColor();
         addInitialColor(color);
-        speechManager.speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
+        speechManager.speak(ColorHelper.getColorName(color));
     }
 
     @Override
     public void onVolumeDown() {
         int color = camera.getColor();
         addComparingColor(color);
-        speechManager.speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
+        speechManager.speak(ColorHelper.getColorName(color));
     }
 
     @Override

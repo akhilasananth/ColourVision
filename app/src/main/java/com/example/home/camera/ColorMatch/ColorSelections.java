@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.example.home.camera.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -56,8 +55,12 @@ public class ColorSelections {
 
     public List<Integer> getColors() {
         ArrayList<Integer> list = new ArrayList<>();
+        int index = 0;
         for (int i : colorList.getColors()) {
-            list.add(i);
+            if (index < colorList.getNumColors()) {
+                list.add(i);
+            }
+            index++;
         }
         return list;
     }

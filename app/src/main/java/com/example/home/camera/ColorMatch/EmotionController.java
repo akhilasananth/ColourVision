@@ -80,8 +80,9 @@ public class EmotionController extends ColorViewController {
         List<String> colorNames = new ArrayList<>();
 
         for (Integer i : getMatchingColors()) {
-            colorNames.add(ColorHelper.getColorName(i));
+            colorNames.add("Color " + i + " " + ColorHelper.getColorName(i));
         }
+        speechManager.speakList(colorNames);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class EmotionController extends ColorViewController {
     public void onVolumeDown() {
         int color = camera.getColor();
         addComparingColor(color);
-        speechManager.speak(ColorHelper.getColorName(ColorHelper.getClosestColor(color)));
+        speechManager.speak(ColorHelper.getColorName(color));
     }
 
     @Override

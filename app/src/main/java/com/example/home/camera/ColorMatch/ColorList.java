@@ -33,6 +33,9 @@ public class ColorList {
         if (index == maxNumColors) {
             index = 0;
         }
+        if (numColors != maxNumColors) {
+            numColors++;
+        }
     }
 
     public void setColor(int pos, int color) {
@@ -44,7 +47,7 @@ public class ColorList {
     }
 
     public int getNumColors() {
-        return maxNumColors;
+        return numColors;
     }
 
     public int getIndex() {
