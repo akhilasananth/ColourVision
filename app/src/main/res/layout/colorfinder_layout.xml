@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Black"
+    android:elevation="@dimen/finder_elevation">
+
+    <com.example.home.camera.ColorMatch.SquareView
+        android:id="@+id/cameraColor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:layout_margin="@dimen/color_selection_margin"/>
+
+    <TextView
+        android:id="@+id/colorName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="15pt"
+        android:gravity="center"/>
+
+</LinearLayout>

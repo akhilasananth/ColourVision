@@ -14,10 +14,13 @@ public class ColorPagerFragmentAdapter extends FragmentPagerAdapter {
 
     private EmotionController emotionController;
 
-    public ColorPagerFragmentAdapter(FragmentManager fm, AlgorithmController algorithmController, EmotionController emotionController) {
+    private AlgorithmEmotionController algorithmEmotionController;
+
+    public ColorPagerFragmentAdapter(FragmentManager fm, AlgorithmController algorithmController, EmotionController emotionController, AlgorithmEmotionController algorithmEmotionController) {
         super(fm);
         this.algorithmController = algorithmController;
         this.emotionController = emotionController;
+        this.algorithmEmotionController = algorithmEmotionController;
     }
 
     @Override
@@ -28,6 +31,8 @@ public class ColorPagerFragmentAdapter extends FragmentPagerAdapter {
                 return algorithmController;
             case Emotion:
                 return emotionController;
+            case General:
+                return algorithmEmotionController;
             default:
                 return null;
         }

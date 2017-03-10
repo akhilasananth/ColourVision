@@ -5,5 +5,10 @@
 
     <dimen name="inital_color_margin">10dp</dimen>
 
-    <dimen name="color_selection_margin">2dp</dimen>
+    <dimen name="color_selection_margin">5dp</dimen>
+
+    <dimen name="elevation">2dp</dimen>
+    <dimen name="selection_elevation">5dp</dimen>
+    <dimen name="finder_elevation">10dp</dimen>
+
 </resources>

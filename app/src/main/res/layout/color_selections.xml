@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/White"
     android:weightSum="1">
 
         <LinearLayout
@@ -11,42 +12,30 @@
             android:layout_weight="0.5"
             android:weightSum="3">
 
-            <FrameLayout
+            <View style="@style/ColorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:id="@+id/color1"
+                android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/color1"
-                    android:layout_margin="@dimen/color_selection_margin" />
-            </FrameLayout>
+            <View style="@style/VerticalDivider"/>
 
-            <FrameLayout
+            <View style="@style/ColorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:id="@+id/color2"
+                android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/color2"
-                    android:layout_margin="@dimen/color_selection_margin" />
-            </FrameLayout>
+            <View style="@style/VerticalDivider"/>
 
-            <FrameLayout
+            <View style="@style/ColorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/color3"
-                    android:layout_margin="@dimen/color_selection_margin" />
-            </FrameLayout>
+                android:id="@+id/color3"
+                android:layout_weight="1"/>
         </LinearLayout>
+
+        <View style="@style/HorizontalDivider"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -55,40 +44,27 @@
             android:weightSum="3"
             android:layout_weight="0.5">
 
-            <FrameLayout
+            <View style="@style/ColorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:id="@+id/color4"
+                android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/color4"
-                    android:layout_margin="@dimen/color_selection_margin" />
-            </FrameLayout>
+            <View style="@style/VerticalDivider"/>
 
-            <FrameLayout
+            <View style="@style/ColorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:id="@+id/color5"
+                android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/color5"
-                    android:layout_margin="@dimen/color_selection_margin" />
-            </FrameLayout>
+            <View style="@style/VerticalDivider"/>
 
-            <FrameLayout
+            <View style="@style/ColorView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:id="@+id/color6"
+                android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/color6"
-                    android:layout_margin="@dimen/color_selection_margin" />
-            </FrameLayout>
         </LinearLayout>
 </LinearLayout>

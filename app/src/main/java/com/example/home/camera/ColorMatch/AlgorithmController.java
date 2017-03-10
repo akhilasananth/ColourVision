@@ -73,6 +73,7 @@ public class AlgorithmController extends ColorViewController {
     public AlgorithmController initialize(SpeechManager speechManager, Camera camera) {
         this.speechManager = speechManager;
         this.camera = camera;
+        setName("Color Wheel Matching");
         return this;
     }
 

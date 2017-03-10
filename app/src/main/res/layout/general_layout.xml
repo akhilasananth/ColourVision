@@ -7,16 +7,26 @@
     <NumberPicker
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:id="@+id/emotion"/>
+        android:id="@+id/emotion"
+        android:layout_weight="0.25"/>
 
 
     <View style="@style/HorizontalDivider"/>
 
-    <include
+    <View style="@style/ColorView"
+        android:id="@+id/initialColor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        layout="@layout/color_selections"
+        android:background="@color/White"
+        android:layout_weight="0.25"/>
+
+    <View style="@style/HorizontalDivider"/>
+
+    <include
+        android:id="@+id/colorSelections"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="0.5"
-        android:id="@+id/colorSelections" />
+        layout="@layout/color_selections"/>
+
 </LinearLayout>

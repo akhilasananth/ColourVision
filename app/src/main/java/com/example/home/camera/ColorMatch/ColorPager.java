@@ -9,7 +9,8 @@ import com.example.home.camera.R;
 public enum ColorPager {
 
     Algorithm(R.layout.algorithm_layout),
-    Emotion(R.layout.emotion_layout);
+    Emotion(R.layout.emotion_layout),
+    General(R.layout.general_layout);
 
     private int layoutResId;
 

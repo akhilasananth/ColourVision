@@ -2,19 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
     android:weightSum="1">
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <View style="@style/ColorView"
         android:layout_height="0dp"
-        android:layout_weight="0.5">
-        <TextView
-            android:id="@+id/initialColor"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/inital_color_margin"/>
-    </FrameLayout>
+        android:layout_width="match_parent"
+        android:layout_weight="0.5"
+        android:background="@color/White"
+        android:id="@+id/initialColor"/>
+
+    <View style="@style/HorizontalDivider"/>
 
     <include
         android:id="@+id/colorSelections"
@@ -22,7 +19,4 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         layout="@layout/color_selections"/>
-
-
-
 </LinearLayout>

@@ -44,7 +44,7 @@ public class ColorSelections {
 
     public void updateColors() {
         int[] colorArray = colorList.getColors();
-        for (int i = 0; i < MAX_NUM_COLORS; i++) {
+        for (int i = 0; i < colorList.getNumColors(); i++) {
             colors[i].setBackgroundColor(colorArray[i]);
         }
     }

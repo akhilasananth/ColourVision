@@ -1,34 +1,22 @@
 package com.example.home.camera.ColorMatch;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.home.camera.R;
 import com.example.home.camera.colorHelper.ColorHelper;
-
-import java.util.List;
 
 /**
  * Created by robertfernandes on 2/21/2017.
@@ -41,10 +29,6 @@ public class CameraActivity extends FragmentActivity {
      * View to show live color feed
      */
     private ColorFinder colorFinder;
-    /**
-     * View to display selected colors
-     */
-    private ColorSelections colorSelections;
     /**
      * View to handle input over whole screen
      */
@@ -66,6 +50,8 @@ public class CameraActivity extends FragmentActivity {
      * Controller object to handle emotion matching
      */
     private EmotionController emotionController;
+
+    private AlgorithmEmotionController algorithmEmotionController;
     /**
      * Controller object to handle Text to speech
      */
@@ -80,8 +66,6 @@ public class CameraActivity extends FragmentActivity {
 
     private boolean running = true;
     private boolean pause = false;
-
-    private int currentColor = Color.BLACK;
 
     /**
      * Thread to update the views
@@ -114,7 +98,6 @@ public class CameraActivity extends FragmentActivity {
 
         instantiateViews();
         instantiateControllers();
-
         updateThread.start();
     }
 
@@ -123,7 +106,7 @@ public class CameraActivity extends FragmentActivity {
      * Instantiate the View Objects
      */
     public void instantiateViews() {
-        colorFinder = (ColorFinder) findViewById(R.id.colorFinder);
+        colorFinder = new ColorFinder(findViewById(R.id.cameraColor), (TextView)findViewById(R.id.colorName));
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
 
@@ -136,12 +119,14 @@ public class CameraActivity extends FragmentActivity {
             public void onSwipeRight() {
                 viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
                 currentController.onSwipeRight();
+                speechManager.speak(currentController.getName());
             }
 
             @Override
             public void onSwipeLeft() {
-                currentController.onSwipeLeft();
                 viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
+                currentController.onSwipeLeft();
+                speechManager.speak(currentController.getName());
             }
 
             @Override
@@ -170,11 +155,14 @@ public class CameraActivity extends FragmentActivity {
         speechManager = new SpeechManager(this);
 
         algorithmController = new AlgorithmController().initialize(speechManager, camera);
-        emotionController = new EmotionController().initialize(speechManager, camera,this);
+        emotionController = new EmotionController().initialize(speechManager, camera);
+        algorithmEmotionController = new AlgorithmEmotionController().initialize(speechManager, camera);
 
         colorPagerFragmentAdapter = new ColorPagerFragmentAdapter(getSupportFragmentManager(),
                 algorithmController,
-                emotionController);
+                emotionController,
+                algorithmEmotionController
+        );
 
         viewPager.setAdapter(colorPagerFragmentAdapter);
 
@@ -184,10 +172,20 @@ public class CameraActivity extends FragmentActivity {
      * Update function used to update Views
      */
     private void update() {
-        currentColor = camera.getColor();
 
-        colorFinder.setColor(currentColor);
-        colorFinder.drawFrame();
+        final int color = camera.getColor();
+
+        try {
+            Thread.sleep(100);
+        } catch(Exception e) {
+
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                colorFinder.updateColor(color);
+            }
+        });
 
         currentController = (ColorViewController)colorPagerFragmentAdapter.getItem(viewPager.getCurrentItem());
     }
