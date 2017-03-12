@@ -81,7 +81,7 @@ public class AlgorithmController extends ColorViewController {
     public AlgorithmController initialize(SpeechManager speechManager, Camera camera) {
         this.speechManager = speechManager;
         this.camera = camera;
-        setName("Color Wheel Matching");
+//        setName("Color Wheel Matching");
         return this;
     }
 
@@ -117,6 +117,7 @@ public class AlgorithmController extends ColorViewController {
     @Override
     public void onSwipeLeft() {
         resetColors();
+        speechManager.speak("Emotion matching");
     }
 
     @Override

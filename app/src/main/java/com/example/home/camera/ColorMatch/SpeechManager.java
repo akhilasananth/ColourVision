@@ -3,6 +3,7 @@ package com.example.home.camera.ColorMatch;
 import android.app.Activity;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Locale;
@@ -12,14 +13,18 @@ import java.util.Locale;
  */
 
 public class SpeechManager {
-
+    private boolean messagePlayed = false;
     private TextToSpeech speech;
 
     public SpeechManager(Activity activity) {
         speech = new TextToSpeech(activity, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
-
+                if(!messagePlayed){
+                    Log.e("CAMERA_ACTIVITY","resumed");
+                    speech.speak("Color wheel matching", TextToSpeech.QUEUE_ADD, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
+                    messagePlayed = true;
+                }
             }
         });
         speech.setLanguage(Locale.getDefault());

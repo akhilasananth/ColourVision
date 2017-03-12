@@ -5,9 +5,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -21,9 +23,10 @@ import com.example.home.camera.colorHelper.ColorHelper;
 /**
  * Created by robertfernandes on 2/21/2017.
  */
-public class CameraActivity extends FragmentActivity {
+public class CameraActivity extends FragmentActivity{
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
+
 
     /**
      * View to show live color feed
@@ -98,7 +101,9 @@ public class CameraActivity extends FragmentActivity {
 
         instantiateViews();
         instantiateControllers();
+
         updateThread.start();
+
     }
 
 
@@ -119,14 +124,14 @@ public class CameraActivity extends FragmentActivity {
             public void onSwipeRight() {
                 viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
                 currentController.onSwipeRight();
-                speechManager.speak(currentController.getName());
+//                speechManager.speak(currentController.getName());
             }
 
             @Override
             public void onSwipeLeft() {
                 viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
                 currentController.onSwipeLeft();
-                speechManager.speak(currentController.getName());
+//                speechManager.speak(currentController.getName());
             }
 
             @Override
@@ -232,6 +237,7 @@ public class CameraActivity extends FragmentActivity {
         camera.turnOnFlashlight();
         pause = false;
     }
+
 
     @Override
     protected void onStart(){

@@ -67,7 +67,7 @@ public class EmotionController extends ColorViewController {
     public EmotionController initialize(SpeechManager speechManager, Camera camera) {
         this.speechManager = speechManager;
         this.camera = camera;
-        setName("Emotion Matching");
+//        setName("Emotion Matching");
         return this;
     }
 
@@ -96,6 +96,9 @@ public class EmotionController extends ColorViewController {
         if(matchingColors.isEmpty()){
             speechManager.speak("No matches");
         }
+    }
+    public void resetColors() {
+        colorSelections.resetColors();
     }
 
     @Override
@@ -131,11 +134,13 @@ public class EmotionController extends ColorViewController {
 
     @Override
     public void onSwipeLeft() {
-
+        resetColors();
+        speechManager.speak("General matching");
     }
 
     @Override
     public void onSwipeRight() {
-
+        resetColors();
+        speechManager.speak("Color wheel matching");
     }
 }
