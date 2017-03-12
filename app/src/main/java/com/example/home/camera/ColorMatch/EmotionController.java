@@ -40,6 +40,7 @@ public class EmotionController extends ColorViewController {
     private ColorSelections colorSelections;
     private NumberPicker numberPicker;
     private String[] emotions;
+    private int index =0;
 
     private Matcher matcher = new Matcher();
 
@@ -71,6 +72,7 @@ public class EmotionController extends ColorViewController {
     }
 
     public void addComparingColor(int color) {
+        this.index++;
         colorSelections.addColor(color);
     }
 
@@ -83,11 +85,15 @@ public class EmotionController extends ColorViewController {
         List<IndexedColor> matchingColors = getMatchingColors();
 
         for (IndexedColor c : matchingColors) {
-            colorNames.add("Color " + (c.getIndex()+1) + " " + ColorHelper.getColorName(c.getColor()));
+
+            if(c.getIndex()<this.index){
+                colorNames.add("Color " + (c.getIndex()+1) + " " + ColorHelper.getColorName(c.getColor()));
+            }
+
         }
         speechManager.speakList(colorNames);
 
-        if(colorNames.isEmpty()){
+        if(matchingColors.isEmpty()){
             speechManager.speak("No matches");
         }
     }

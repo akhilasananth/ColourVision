@@ -25,6 +25,7 @@ public class AlgorithmController extends ColorViewController {
     private ColorSelections colorSelections;
     private SpeechManager speechManager;
     private CurrentColorChoice currentChoice;
+    private int index = 0;
 
     private Camera camera;
 
@@ -47,6 +48,7 @@ public class AlgorithmController extends ColorViewController {
     }
 
     public void addComparingColor(int color) {
+        this.index++;
         colorSelections.addColor(color);
     }
 
@@ -64,10 +66,16 @@ public class AlgorithmController extends ColorViewController {
         List<IndexedColor> colors = getMatchingColors();
 
         for (IndexedColor c : colors) {
-            colorNames.add("Color " + (c.getIndex() + 1) + " " + ColorHelper.getColorName(c.getColor()));
+            if(c.getIndex()<this.index) {
+                colorNames.add("Color " + (c.getIndex() + 1) + " " + ColorHelper.getColorName(c.getColor()));
+            }
         }
 
         speechManager.speakList(colorNames);
+
+        if(colors.isEmpty()){
+            speechManager.speak("No matches");
+        }
     }
 
     public AlgorithmController initialize(SpeechManager speechManager, Camera camera) {
