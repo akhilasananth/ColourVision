@@ -53,16 +53,17 @@ public class ColorSelections {
         colorList = new ColorList(MAX_NUM_COLORS);
     }
 
-    public List<Integer> getColors() {
-        ArrayList<Integer> list = new ArrayList<>();
-        int index = 0;
-        for (int i : colorList.getColors()) {
-            if (index < colorList.getNumColors()) {
-                list.add(i);
-            }
-            index++;
+    public List<IndexedColor> getColors() {
+        ArrayList<IndexedColor> list = new ArrayList<>();
+        int[] colorArray = colorList.getColors();
+        for (int i = 0; i < colorArray.length; i++) {
+            list.add(new IndexedColor(i,colorArray[i]));
         }
         return list;
+    }
+
+    public int[] getColorArray(){
+        return colorList.getColors();
     }
 
 }

@@ -102,17 +102,13 @@ public class ColorHelper {
     public static String getColorName(int color) {
 
         String colorName = "";
-        if(isGreyscaleColor(color) && (color!=Color.BLACK) && (color!=Color.WHITE)){
-            colorName = "Gray";
-        }
-        else {
+
 
             for (String s : colorMap.keySet()) {
                 if (colorMap.get(s) == color) {
                     colorName = s;
                 }
             }
-        }
 
         return colorName;
     }

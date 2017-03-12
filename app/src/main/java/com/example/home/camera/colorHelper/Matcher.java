@@ -3,6 +3,8 @@ package com.example.home.camera.colorHelper;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
+import com.example.home.camera.ColorMatch.IndexedColor;
+
 import java.util.*;
 
 /**
@@ -70,23 +72,24 @@ public class Matcher {
         }
     }
 
-    public List<Integer> isMatch(int color, List<Integer> colors) {
-        List<Integer> matchingColors = new ArrayList<>();
-        for (Integer i : colors) {
-            if (isMatch(color, i)){
+    public List<IndexedColor> isMatch(int color, List<IndexedColor> colors) {
+        List<IndexedColor> matchingColors = new ArrayList<>();
+        for (IndexedColor i : colors) {
+            if (isMatch(color, i.getColor())){
                 matchingColors.add(i);
             }
         }
         return matchingColors;
     }
+
     public boolean isMatch(String emotion, int color){
         return (emotionsAlgorithm.isMatch(emotion,color));
     }
 
-    public List<Integer> isMatch(String emotion, List<Integer> colors){
-        List<Integer> matchingColors = new ArrayList<>();
-        for (Integer i : colors) {
-            if (isMatch(emotion, i)){
+    public List<IndexedColor> isMatch(String emotion, List<IndexedColor> colors){
+        List<IndexedColor> matchingColors = new ArrayList<>();
+        for (IndexedColor i : colors) {
+            if (isMatch(emotion, i.getColor())){
                 matchingColors.add(i);
             }
         }

@@ -54,17 +54,17 @@ public class AlgorithmController extends ColorViewController {
         colorSelections.resetColors();
     }
 
-    public List<Integer> getMatchingColors() {
+    public List<IndexedColor> getMatchingColors() {
         return matcher.isMatch(currentChoice.getColor(), colorSelections.getColors());
     }
 
     public void checkMatches() {
         List<String> colorNames = new ArrayList<>();
 
-        List<Integer> colors = getMatchingColors();
+        List<IndexedColor> colors = getMatchingColors();
 
-        for (Integer i : colors) {
-            colorNames.add("Color " + (colors.indexOf(i) + 1) + " " + ColorHelper.getColorName(i));
+        for (IndexedColor c : colors) {
+            colorNames.add("Color " + (c.getIndex() + 1) + " " + ColorHelper.getColorName(c.getColor()));
         }
 
         speechManager.speakList(colorNames);

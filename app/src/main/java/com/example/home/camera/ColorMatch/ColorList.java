@@ -38,6 +38,7 @@ public class ColorList {
         }
     }
 
+
     public void setColor(int pos, int color) {
         colors[pos] = color;
     }
@@ -63,8 +64,6 @@ public class ColorList {
         return colors[i];
     }
 
-    public int getCurrentColor() {
-        return colors[index];
-    }
+
 
 }

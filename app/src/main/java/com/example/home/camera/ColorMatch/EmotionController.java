@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TextureView;
@@ -23,6 +24,7 @@ import com.example.home.camera.colorHelper.ColorHelper;
 import com.example.home.camera.colorHelper.Matcher;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -72,17 +74,22 @@ public class EmotionController extends ColorViewController {
         colorSelections.addColor(color);
     }
 
-    public List<Integer> getMatchingColors() {
+    public List<IndexedColor> getMatchingColors() {
         return matcher.isMatch(emotion, colorSelections.getColors());
     }
 
     public void checkMatches() {
         List<String> colorNames = new ArrayList<>();
+        List<IndexedColor> matchingColors = getMatchingColors();
 
-        for (Integer i : getMatchingColors()) {
-            colorNames.add("Color " + i + " " + ColorHelper.getColorName(i));
+        for (IndexedColor c : matchingColors) {
+            colorNames.add("Color " + (c.getIndex()+1) + " " + ColorHelper.getColorName(c.getColor()));
         }
         speechManager.speakList(colorNames);
+
+        if(colorNames.isEmpty()){
+            speechManager.speak("No matches");
+        }
     }
 
     @Override
