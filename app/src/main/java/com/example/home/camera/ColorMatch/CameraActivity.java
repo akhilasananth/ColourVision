@@ -151,7 +151,6 @@ public class CameraActivity extends FragmentActivity {
      */
     public void instantiateControllers() {
         camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
-        camera.turnOnFlashlight();
         speechManager = new SpeechManager(this);
 
         algorithmController = new AlgorithmController().initialize(speechManager, camera);
@@ -232,6 +231,13 @@ public class CameraActivity extends FragmentActivity {
         super.onResume();
         camera.turnOnFlashlight();
         pause = false;
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        camera.openCamera();
+        camera.turnOnFlashlight();
     }
 
     @Override
