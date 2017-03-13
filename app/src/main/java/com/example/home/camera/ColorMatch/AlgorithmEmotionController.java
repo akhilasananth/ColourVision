@@ -2,6 +2,7 @@ package com.example.home.camera.ColorMatch;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class AlgorithmEmotionController extends ColorViewController {
     private SpeechManager speechManager;
     private CurrentColorChoice currentColorChoice;
     private String emotion = "";
+    private int index =0;
 
     private Camera camera;
 
@@ -60,6 +62,7 @@ public class AlgorithmEmotionController extends ColorViewController {
     }
 
     public void addComparingColor(int color) {
+        this.index++;
         colorSelections.addColor(color);
     }
 
@@ -70,8 +73,14 @@ public class AlgorithmEmotionController extends ColorViewController {
     public List<IndexedColor> getMatchingColors() {
 
         List<IndexedColor> matches = matcher.isMatch(currentColorChoice.getColor(), colorSelections.getColors());
+        List<IndexedColor> finalMatches = matcher.isMatch(emotion, matches);
+        Log.e("GENERAL","colors selected: "+index);
 
-        return matcher.isMatch(emotion, matches);
+        if(matcher.isMatch(emotion,currentColorChoice.getColor()) && index>0){
+            finalMatches.add(new IndexedColor(-1,currentColorChoice.getColor()));
+        }
+
+        return finalMatches;
     }
 
     public void checkMatches() {
@@ -80,10 +89,16 @@ public class AlgorithmEmotionController extends ColorViewController {
         List<IndexedColor> colors = getMatchingColors();
 
         for (IndexedColor c : colors) {
-            colorNames.add("Color " + (c.getIndex() + 1) + " " + ColorHelper.getColorName(c.getColor()));
+            if(c.getIndex()<index) {
+                colorNames.add("Color " + (c.getIndex() + 1) + " " + ColorHelper.getColorName(c.getColor()));
+            }
         }
 
         speechManager.speakList(colorNames);
+
+        if(colors.isEmpty()){
+            speechManager.speak("No matches");
+        }
     }
 
     public AlgorithmEmotionController initialize(SpeechManager speechManager, Camera camera) {

@@ -21,7 +21,6 @@ public class SpeechManager {
             @Override
             public void onInit(int i) {
                 if(!messagePlayed){
-                    Log.e("CAMERA_ACTIVITY","resumed");
                     speech.speak("Color wheel matching", TextToSpeech.QUEUE_ADD, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
                     messagePlayed = true;
                 }
