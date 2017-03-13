@@ -20,13 +20,14 @@ public class SpeechManager {
         speech = new TextToSpeech(activity, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
+                speech.setLanguage(Locale.getDefault());
                 if(!messagePlayed){
                     speech.speak("Color wheel matching", TextToSpeech.QUEUE_ADD, Bundle.EMPTY, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
                     messagePlayed = true;
                 }
             }
         });
-        speech.setLanguage(Locale.getDefault());
+
     }
 
     public void speak(String message) {

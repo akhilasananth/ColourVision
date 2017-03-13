@@ -71,15 +71,16 @@ public class AlgorithmEmotionController extends ColorViewController {
     }
 
     public List<IndexedColor> getMatchingColors() {
-
+        List<IndexedColor> finalMatches = new ArrayList<IndexedColor>();
+        boolean hasEmotionMatchColor = false;
         List<IndexedColor> matches = matcher.isMatch(currentColorChoice.getColor(), colorSelections.getColors());
-        List<IndexedColor> finalMatches = matcher.isMatch(emotion, matches);
-        Log.e("GENERAL","colors selected: "+index);
-
-        if(matcher.isMatch(emotion,currentColorChoice.getColor()) && index>0){
-            finalMatches.add(new IndexedColor(-1,currentColorChoice.getColor()));
+        for(IndexedColor c : matches){
+            hasEmotionMatchColor = matcher.isMatch(emotion,c.getColor());
         }
 
+        if(hasEmotionMatchColor || matcher.isMatch(emotion,currentColorChoice.getColor())){
+            finalMatches = matches;
+        }
         return finalMatches;
     }
 
