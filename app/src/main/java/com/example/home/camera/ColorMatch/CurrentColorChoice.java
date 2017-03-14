@@ -28,6 +28,10 @@ public class CurrentColorChoice {
         colorView.setBackgroundColor(color);
     }
 
+    public void reset() {
+        setColor(Color.TRANSPARENT);
+    }
+
     public int getColor() {
         return color;
     }

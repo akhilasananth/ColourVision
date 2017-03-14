@@ -54,6 +54,7 @@ public class AlgorithmController extends ColorViewController {
 
     public void resetColors() {
         colorSelections.resetColors();
+        currentChoice.reset();
     }
 
     public List<IndexedColor> getMatchingColors() {

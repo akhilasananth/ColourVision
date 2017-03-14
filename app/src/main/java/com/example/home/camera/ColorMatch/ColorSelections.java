@@ -51,6 +51,9 @@ public class ColorSelections {
 
     public void resetColors() {
         colorList = new ColorList(MAX_NUM_COLORS);
+        for (View c : colors) {
+            c.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     public List<IndexedColor> getColors() {

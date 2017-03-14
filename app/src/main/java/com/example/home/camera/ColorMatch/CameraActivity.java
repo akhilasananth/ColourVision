@@ -20,6 +20,10 @@ import android.widget.Toast;
 import com.example.home.camera.R;
 import com.example.home.camera.colorHelper.ColorHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 /**
  * Created by robertfernandes on 2/21/2017.
  */
@@ -122,15 +126,15 @@ public class CameraActivity extends FragmentActivity{
         actionListener.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeRight() {
-                viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
                 currentController.onSwipeRight();
+                viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
 //                speechManager.speak(currentController.getName());
             }
 
             @Override
             public void onSwipeLeft() {
-                viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
                 currentController.onSwipeLeft();
+                viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
 //                speechManager.speak(currentController.getName());
             }
 
@@ -157,6 +161,8 @@ public class CameraActivity extends FragmentActivity{
     public void instantiateControllers() {
         camera = new Camera(this, (TextureView) findViewById(R.id.cameraPreview));
         speechManager = new SpeechManager(this);
+
+        camera.turnOnFlashlight();
 
         algorithmController = new AlgorithmController().initialize(speechManager, camera);
         emotionController = new EmotionController().initialize(speechManager, camera);
@@ -242,7 +248,6 @@ public class CameraActivity extends FragmentActivity{
     @Override
     protected void onStart(){
         super.onStart();
-        camera.openCamera();
         camera.turnOnFlashlight();
     }
 

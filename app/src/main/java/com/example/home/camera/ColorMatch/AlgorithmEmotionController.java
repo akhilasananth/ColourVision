@@ -68,6 +68,7 @@ public class AlgorithmEmotionController extends ColorViewController {
 
     public void resetColors() {
         colorSelections.resetColors();
+        currentColorChoice.reset();
     }
 
     public List<IndexedColor> getMatchingColors() {
